@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classic Ludo Game</title>
+    <title>Classic Ludo Game - Multiplayer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,11 +14,10 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            background: linear-gradient(135deg, #1a237e, #311b92);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             padding: 20px;
             color: #fff;
@@ -29,7 +28,7 @@
             text-align: center;
             margin-bottom: 20px;
             width: 100%;
-            max-width: 800px;
+            max-width: 1000px;
         }
         
         .game-title {
@@ -385,11 +384,54 @@
         .player-2 .player-tag { background: rgba(76, 175, 80, 0.4); color: #c8e6c9; }
         .player-3 .player-tag { background: rgba(255, 235, 59, 0.4); color: #333; }
         .player-4 .player-tag { background: rgba(33, 150, 243, 0.4); color: #bbdefb; }
+        
+        /* Online section */
+        .online-section {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .online-section h3 {
+            color: #ffeb3b;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+        
+        .online-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-group input {
+            padding: 10px 15px;
+            border-radius: 30px;
+            border: 2px solid #673ab7;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            min-width: 250px;
+        }
+        
+        .input-group input::placeholder {
+            color: #b3e5fc;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1 class="game-title">CLASSIC LUDO GAME</h1>
+        <h1 class="game-title">CLASSIC LUDO GAME - ONLINE MULTIPLAYER</h1>
         <div class="current-player">Current player: <span id="current-player-name">Albante (Red)</span></div>
     </div>
     
@@ -488,8 +530,23 @@
         </div>
     </div>
     
+    <div class="online-section">
+        <h3>Play Online with Friends</h3>
+        <div class="online-controls">
+            <div class="input-group">
+                <input type="text" id="room-id" placeholder="Enter Room ID">
+                <button class="btn" id="join-btn">Join Room</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="player-name" placeholder="Your Name">
+                <button class="btn" id="create-btn">Create Room</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="instructions">
         <p><strong>How to play:</strong> Click "Roll Dice" to get a number. Then select one of your tokens and click "Move Token" to advance it. Get all your tokens to the center to win!</p>
+        <p><strong>Online Play:</strong> Create a room and share the ID with friends, or join an existing room.</p>
         <p><strong>Special Rules:</strong> Rolling a 6 gives you an extra turn. Landing on an opponent's token sends it back to their base.</p>
     </div>
     
@@ -549,61 +606,14 @@
         const rollBtn = document.getElementById('roll-btn');
         const moveBtn = document.getElementById('move-btn');
         const playerCards = document.querySelectorAll('.player-card');
+        const joinBtn = document.getElementById('join-btn');
+        const createBtn = document.getElementById('create-btn');
+        const roomIdInput = document.getElementById('room-id');
+        const playerNameInput = document.getElementById('player-name');
         
         let currentPlayerIndex = 0;
         let diceValue = 0;
         let selectedToken = null;
         let canRoll = true;
         let canMove = false;
-        
-        // Initialize the game
-        function initGame() {
-            createTokens();
-            updatePlayerDisplay();
-            addEventListeners();
-        }
-        
-        // Create tokens on the board
-        function createTokens() {
-            players.forEach(player => {
-                for (let i = 0; i < 4; i++) {
-                    const token = document.createElement('div');
-                    token.className = `token ${player.color} in-base`;
-                    token.dataset.player = player.id;
-                    token.dataset.token = i + 1;
-                    token.dataset.position = 0;
-                    token.innerHTML = player.id;
-                    
-                    // Position token in starting area
-                    positionToken(token, player.id, i);
-                    
-                    board.appendChild(token);
-                }
-            });
-        }
-        
-        // Position token based on player and token number
-        function positionToken(token, playerId, tokenIndex) {
-            const basePositions = {
-                '1': { // Red
-                    0: { top: '15%', left: '15%' },
-                    1: { top: '15%', left: '35%' },
-                    2: { top: '35%', left: '15%' },
-                    3: { top: '35%', left: '35%' }
-                },
-                '2': { // Green
-                    0: { top: '15%', left: '85%' },
-                    1: { top: '15%', left: '65%' },
-                    2: { top: '35%', left: '85%' },
-                    3: { top: '35%', left: '65%' }
-                },
-                '3': { // Yellow
-                    0: { top: '85%', left: '15%' },
-                    1: { top: '85%', left: '35%' },
-                    2: { top: '65%', left: '15%' },
-                    3: { top: '65%', left: '35%' }
-                },
-                '4': { // Blue
-                    0: { top: '85%', left: '85%' },
-                    1: { top: '85%', left: '65%' },
-  
+    
