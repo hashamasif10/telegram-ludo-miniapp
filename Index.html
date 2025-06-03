@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Ludo</title>
+    <title>Classic Ludo Game</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,19 +14,19 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 15px;
+            padding: 10px;
             overflow: hidden;
         }
         
         .game-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             overflow: hidden;
             width: 100%;
             max-width: 500px;
@@ -35,86 +35,106 @@
         }
         
         .header {
-            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            background: linear-gradient(90deg, #e74c3c, #e67e22);
             color: white;
-            padding: 20px;
-            font-size: 1.8rem;
+            padding: 15px;
+            font-size: 1.5rem;
             font-weight: bold;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .board-container {
-            padding: 20px;
+            padding: 15px;
             background: #f8f9fa;
-            position: relative;
         }
         
+        /* Classic Ludo board styling */
         .board {
-            position: relative;
             width: 100%;
             max-width: 400px;
-            height: 400px;
             margin: 0 auto;
-            background: #e9ecef;
-            border: 4px solid #495057;
-            border-radius: 10px;
+            aspect-ratio: 1/1;
             display: grid;
             grid-template-columns: repeat(15, 1fr);
             grid-template-rows: repeat(15, 1fr);
             gap: 1px;
-        }
-        
-        .cell {
-            background: white;
+            background: #2c3e50;
+            border: 3px solid #34495e;
+            border-radius: 5px;
             position: relative;
         }
         
+        .cell {
+            background: #ecf0f1;
+        }
+        
+        /* Player bases */
         .red-base {
-            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-            grid-area: 1 / 1 / 4 / 4;
-            border-radius: 10px 0 0 0;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            grid-area: 1 / 1 / 6 / 6;
+            border-top-left-radius: 5px;
         }
         
         .green-base {
-            background: linear-gradient(135deg, #51cf66, #94d82d);
-            grid-area: 1 / 13 / 4 / 16;
-            border-radius: 0 10px 0 0;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            grid-area: 1 / 10 / 6 / 15;
+            border-top-right-radius: 5px;
         }
         
         .yellow-base {
-            background: linear-gradient(135deg, #ffd43b, #ffa94d);
-            grid-area: 13 / 1 / 16 / 4;
-            border-radius: 0 0 0 10px;
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            grid-area: 10 / 1 / 15 / 6;
+            border-bottom-left-radius: 5px;
         }
         
         .blue-base {
-            background: linear-gradient(135deg, #4dabf7, #748ffc);
-            grid-area: 13 / 13 / 16 / 16;
-            border-radius: 0 0 10px 0;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            grid-area: 10 / 10 / 15 / 15;
+            border-bottom-right-radius: 5px;
         }
         
+        /* Center home */
         .center-home {
             background: #f1f3f5;
-            grid-area: 6 / 6 / 11 / 11;
+            grid-area: 6 / 6 / 10 / 10;
             border-radius: 50%;
-            border: 3px solid #495057;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+            border: 3px solid #34495e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            z-index: 2;
         }
         
+        /* Path cells */
         .path {
-            background: #e9ecef;
+            background: #bdc3c7;
         }
         
+        /* Colored paths */
+        .red-path { background: #ffb8b8; }
+        .green-path { background: #b8ffc8; }
+        .yellow-path { background: #fff9b8; }
+        .blue-path { background: #b8e2ff; }
+        
+        /* Tokens */
         .token {
-            width: 80%;
-            height: 80%;
+            width: 70%;
+            height: 70%;
             border-radius: 50%;
-            border: 2px solid #333;
+            border: 2px solid #2c3e50;
             position: absolute;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
         
         .token-active {
@@ -123,13 +143,13 @@
             animation: pulse 1s infinite;
         }
         
-        .red-token { background: #ff6b6b; }
-        .green-token { background: #51cf66; }
-        .yellow-token { background: #ffd43b; }
-        .blue-token { background: #4dabf7; }
+        .red-token { background: #e74c3c; }
+        .green-token { background: #2ecc71; }
+        .yellow-token { background: #f1c40f; }
+        .blue-token { background: #3498db; }
         
         .controls {
-            padding: 20px;
+            padding: 15px;
             background: white;
         }
         
@@ -137,21 +157,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         .dice {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            border-radius: 20px;
+            border-radius: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: white;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
             cursor: pointer;
             user-select: none;
             margin: 0 auto;
@@ -163,11 +183,14 @@
         }
         
         .status {
-            margin-top: 15px;
-            font-size: 1.3rem;
-            color: #495057;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            color: #2c3e50;
             font-weight: bold;
             min-height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .player-indicator {
@@ -175,9 +198,31 @@
             width: 25px;
             height: 25px;
             border-radius: 50%;
-            margin-left: 10px;
-            vertical-align: middle;
+            margin: 0 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .player-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .player {
+            display: flex;
+            align-items: center;
+            margin: 5px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #f1f3f5;
+        }
+        
+        .player-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 5px;
         }
         
         @keyframes rollDice {
@@ -193,30 +238,12 @@
             70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
             100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
         }
-        
-        @media (max-width: 500px) {
-            .board {
-                height: 300px;
-            }
-            .dice {
-                width: 80px;
-                height: 80px;
-                font-size: 2.5rem;
-            }
-            .header {
-                font-size: 1.5rem;
-                padding: 15px;
-            }
-            .status {
-                font-size: 1.1rem;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="game-container">
         <div class="header">
-            🎲 TELEGRAM LUDO
+            🎲 CLASSIC LUDO GAME
         </div>
         
         <div class="board-container">
@@ -228,9 +255,7 @@
                 <div class="cell blue-base" id="blue-base"></div>
                 
                 <!-- Center home -->
-                <div class="cell center-home"></div>
-                
-                <!-- Path cells will be added dynamically -->
+                <div class="cell center-home">HOME</div>
             </div>
         </div>
         
@@ -240,7 +265,28 @@
             </div>
             
             <div class="status" id="status">
-                Tap the dice to start!
+                Current player: 
+                <span class="player-indicator" id="current-player" style="background: #e74c3c"></span>
+                <span id="player-name">Red</span>
+            </div>
+            
+            <div class="player-info">
+                <div class="player">
+                    <div class="player-color" style="background: #e74c3c"></div>
+                    <span>Player 1</span>
+                </div>
+                <div class="player">
+                    <div class="player-color" style="background: #2ecc71"></div>
+                    <span>Player 2</span>
+                </div>
+                <div class="player">
+                    <div class="player-color" style="background: #f1c40f"></div>
+                    <span>Player 3</span>
+                </div>
+                <div class="player">
+                    <div class="player-color" style="background: #3498db"></div>
+                    <span>Player 4</span>
+                </div>
             </div>
         </div>
     </div>
@@ -250,30 +296,28 @@
             const board = document.getElementById('board');
             const dice = document.getElementById('dice');
             const status = document.getElementById('status');
+            const currentPlayerIndicator = document.getElementById('current-player');
+            const playerName = document.getElementById('player-name');
             
             // Game state
             const gameState = {
                 currentPlayer: 'red',
                 diceValue: 0,
-                tokens: {
-                    red: [{id: 'red1', position: 'base'}, {id: 'red2', position: 'base'}, 
-                          {id: 'red3', position: 'base'}, {id: 'red4', position: 'base'}],
-                    green: [{id: 'green1', position: 'base'}, {id: 'green2', position: 'base'},
-                            {id: 'green3', position: 'base'}, {id: 'green4', position: 'base'}],
-                    yellow: [{id: 'yellow1', position: 'base'}, {id: 'yellow2', position: 'base'},
-                             {id: 'yellow3', position: 'base'}, {id: 'yellow4', position: 'base'}],
-                    blue: [{id: 'blue1', position: 'base'}, {id: 'blue2', position: 'base'},
-                           {id: 'blue3', position: 'base'}, {id: 'blue4', position: 'base'}]
+                players: {
+                    red: { name: 'Player 1 (Red)', color: '#e74c3c' },
+                    green: { name: 'Player 2 (Green)', color: '#2ecc71' },
+                    yellow: { name: 'Player 3 (Yellow)', color: '#f1c40f' },
+                    blue: { name: 'Player 4 (Blue)', color: '#3498db' }
                 }
             };
             
-            // Create path cells
+            // Create board with paths
             function createBoard() {
                 for (let row = 0; row < 15; row++) {
                     for (let col = 0; col < 15; col++) {
                         // Skip base and home areas
-                        if ((row < 3 && col < 3) || (row < 3 && col > 11) || 
-                            (row > 11 && col < 3) || (row > 11 && col > 11) ||
+                        if ((row < 5 && col < 5) || (row < 5 && col > 9) || 
+                            (row > 9 && col < 5) || (row > 9 && col > 9) ||
                             (row > 5 && row < 9 && col > 5 && col < 9)) {
                             continue;
                         }
@@ -282,6 +326,13 @@
                         cell.classList.add('cell', 'path');
                         cell.dataset.row = row;
                         cell.dataset.col = col;
+                        
+                        // Color the paths
+                        if (row === 7 && col < 5) cell.classList.add('red-path');
+                        else if (row < 5 && col === 7) cell.classList.add('green-path');
+                        else if (row === 7 && col > 9) cell.classList.add('yellow-path');
+                        else if (row > 9 && col === 7) cell.classList.add('blue-path');
+                        
                         board.appendChild(cell);
                     }
                 }
@@ -302,7 +353,7 @@
                     token.classList.add('token', 'red-token');
                     token.style.top = pos.top;
                     token.style.left = pos.left;
-                    token.dataset.id = `red${document.querySelectorAll('.red-token').length + 1}`;
+                    token.textContent = '1';
                     document.getElementById('red-base').appendChild(token);
                 });
                 
@@ -312,7 +363,7 @@
                     token.classList.add('token', 'green-token');
                     token.style.top = pos.top;
                     token.style.left = pos.left;
-                    token.dataset.id = `green${document.querySelectorAll('.green-token').length + 1}`;
+                    token.textContent = '2';
                     document.getElementById('green-base').appendChild(token);
                 });
                 
@@ -322,7 +373,7 @@
                     token.classList.add('token', 'yellow-token');
                     token.style.top = pos.top;
                     token.style.left = pos.left;
-                    token.dataset.id = `yellow${document.querySelectorAll('.yellow-token').length + 1}`;
+                    token.textContent = '3';
                     document.getElementById('yellow-base').appendChild(token);
                 });
                 
@@ -332,7 +383,7 @@
                     token.classList.add('token', 'blue-token');
                     token.style.top = pos.top;
                     token.style.left = pos.left;
-                    token.dataset.id = `blue${document.querySelectorAll('.blue-token').length + 1}`;
+                    token.textContent = '4';
                     document.getElementById('blue-base').appendChild(token);
                 });
             }
@@ -344,7 +395,7 @@
                 if (dice.classList.contains('dice-rolling')) return;
                 
                 dice.classList.add('dice-rolling');
-                status.textContent = "Rolling...";
+                status.textContent = "Rolling dice...";
                 
                 setTimeout(() => {
                     const roll = Math.floor(Math.random() * 6) + 1;
@@ -352,77 +403,33 @@
                     dice.classList.remove('dice-rolling');
                     
                     gameState.diceValue = roll;
-                    status.innerHTML = `You rolled <strong>${roll}</strong>! ${roll === 6 ? '🎉 Extra turn!' : ''}`;
+                    updateStatus();
                     
-                    // Enable token selection
-                    if (roll === 6) {
-                        status.innerHTML += "<br>Select a token to move";
-                        enableTokenSelection();
-                    } else {
-                        setTimeout(() => {
-                            status.innerHTML = "Switching to next player...";
-                            setTimeout(nextPlayer, 1500);
-                        }, 2000);
-                    }
+                    // For demo: switch player after roll
+                    setTimeout(switchPlayer, 1500);
                 }, 1500);
             }
             
-            function enableTokenSelection() {
-                const tokens = document.querySelectorAll(`.${gameState.currentPlayer}-token`);
-                tokens.forEach(token => {
-                    token.classList.add('token-active');
-                    token.addEventListener('click', handleTokenClick);
-                });
+            function updateStatus() {
+                const player = gameState.players[gameState.currentPlayer];
+                currentPlayerIndicator.style.background = player.color;
+                playerName.textContent = player.name;
+                status.innerHTML = `Current player: <span class="player-indicator" style="background: ${player.color}"></span> ${player.name}`;
             }
             
-            function handleTokenClick(e) {
-                const tokenId = e.target.dataset.id;
-                status.innerHTML = `Moving <strong>${tokenId}</strong>...`;
-                
-                // Remove event listeners
-                const tokens = document.querySelectorAll(`.${gameState.currentPlayer}-token`);
-                tokens.forEach(token => {
-                    token.classList.remove('token-active');
-                    token.removeEventListener('click', handleTokenClick);
-                });
-                
-                // Move token (simplified)
-                setTimeout(() => {
-                    status.innerHTML = `<strong>${tokenId}</strong> moved!`;
-                    setTimeout(() => {
-                        if (gameState.diceValue === 6) {
-                            status.innerHTML = "🎉 Roll again!";
-                            dice.classList.add('pulse');
-                        } else {
-                            nextPlayer();
-                        }
-                    }, 1500);
-                }, 1000);
-            }
-            
-            function nextPlayer() {
-                dice.classList.remove('pulse');
+            function switchPlayer() {
                 const players = ['red', 'green', 'yellow', 'blue'];
                 const currentIndex = players.indexOf(gameState.currentPlayer);
                 gameState.currentPlayer = players[(currentIndex + 1) % players.length];
                 
-                const playerName = gameState.currentPlayer.charAt(0).toUpperCase() + gameState.currentPlayer.slice(1);
-                status.innerHTML = `${playerName} player's turn <span class='player-indicator' style='background: ${getPlayerColor(gameState.currentPlayer)}'></span>`;
-            }
-            
-            function getPlayerColor(player) {
-                return {
-                    red: '#ff6b6b',
-                    green: '#51cf66',
-                    yellow: '#ffd43b',
-                    blue: '#4dabf7'
-                }[player];
+                updateStatus();
+                status.innerHTML += `<br>Rolled ${gameState.diceValue}!`;
             }
             
             // Initialize game
             createBoard();
             addTokens();
-            status.innerHTML = "Red player's turn <span class='player-indicator' style='background: #ff6b6b'></span>";
+            updateStatus();
         });
     </script>
 </body>
