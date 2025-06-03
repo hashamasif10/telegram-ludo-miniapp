@@ -2,435 +2,217 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classic Ludo Game</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            touch-action: manipulation;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            background: linear-gradient(135deg, #1a237e, #311b92);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 10px;
-            overflow: hidden;
+            padding: 20px;
+            color: white;
         }
         
         .game-container {
-            background: #fff;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .header {
-            background: linear-gradient(90deg, #e74c3c, #e67e22);
-            color: white;
-            padding: 15px;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        
-        .board-container {
-            padding: 15px;
-            background: #f8f9fa;
-        }
-        
-        /* Classic Ludo board styling */
-        .board {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 400px;
-            margin: 0 auto;
-            aspect-ratio: 1/1;
-            display: grid;
-            grid-template-columns: repeat(15, 1fr);
-            grid-template-rows: repeat(15, 1fr);
-            gap: 1px;
-            background: #2c3e50;
-            border: 3px solid #34495e;
-            border-radius: 5px;
-            position: relative;
+            padding: 25px;
+            text-align: center;
         }
         
-        .cell {
-            background: #ecf0f1;
+        .game-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #ffeb3b;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
+            letter-spacing: 1.5px;
         }
         
-        /* Player bases */
-        .red-base {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            grid-area: 1 / 1 / 6 / 6;
-            border-top-left-radius: 5px;
-        }
-        
-        .green-base {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            grid-area: 1 / 10 / 6 / 15;
-            border-top-right-radius: 5px;
-        }
-        
-        .yellow-base {
-            background: linear-gradient(135deg, #f1c40f, #f39c12);
-            grid-area: 10 / 1 / 15 / 6;
-            border-bottom-left-radius: 5px;
-        }
-        
-        .blue-base {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            grid-area: 10 / 10 / 15 / 15;
-            border-bottom-right-radius: 5px;
-        }
-        
-        /* Center home */
-        .center-home {
-            background: #f1f3f5;
-            grid-area: 6 / 6 / 10 / 10;
-            border-radius: 50%;
-            border: 3px solid #34495e;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2rem;
+        .current-player {
+            background: #e91e63;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 18px;
             font-weight: bold;
-            color: #2c3e50;
-            z-index: 2;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
         }
         
-        /* Path cells */
-        .path {
-            background: #bdc3c7;
-        }
-        
-        /* Colored paths */
-        .red-path { background: #ffb8b8; }
-        .green-path { background: #b8ffc8; }
-        .yellow-path { background: #fff9b8; }
-        .blue-path { background: #b8e2ff; }
-        
-        /* Tokens */
-        .token {
-            width: 70%;
-            height: 70%;
-            border-radius: 50%;
-            border: 2px solid #2c3e50;
-            position: absolute;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 10;
+        .players-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-        
-        .token-active {
-            transform: scale(1.2);
-            box-shadow: 0 0 15px gold;
-            animation: pulse 1s infinite;
-        }
-        
-        .red-token { background: #e74c3c; }
-        .green-token { background: #2ecc71; }
-        .yellow-token { background: #f1c40f; }
-        .blue-token { background: #3498db; }
-        
-        .controls {
-            padding: 15px;
-            background: white;
-        }
-        
-        .dice-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px 0;
-        }
-        
-        .dice {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            cursor: pointer;
-            user-select: none;
-            margin: 0 auto;
-            transition: all 0.3s ease;
-        }
-        
-        .dice-rolling {
-            animation: rollDice 0.5s infinite;
-        }
-        
-        .status {
-            margin: 10px 0;
-            font-size: 1.2rem;
-            color: #2c3e50;
-            font-weight: bold;
-            min-height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .player-indicator {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            margin: 0 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .player-info {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 20px;
         }
         
         .player {
             display: flex;
             align-items: center;
-            margin: 5px;
-            padding: 5px 10px;
-            border-radius: 20px;
-            background: #f1f3f5;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .player.active {
+            background: rgba(33, 150, 243, 0.3);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(33, 150, 243, 0.5);
         }
         
         .player-color {
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            margin-right: 5px;
+            margin-right: 15px;
         }
         
-        @keyframes rollDice {
-            0% { transform: rotate(0deg) scale(1); }
-            25% { transform: rotate(90deg) scale(1.1); }
-            50% { transform: rotate(180deg) scale(1.2); }
-            75% { transform: rotate(270deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
+        .player-1 .player-color { background: #f44336; }
+        .player-2 .player-color { background: #2196f3; }
+        .player-3 .player-color { background: #4caf50; }
+        .player-4 .player-color { background: #ffeb3b; }
+        
+        .player-name {
+            font-size: 20px;
+            font-weight: 500;
+            flex-grow: 1;
+            text-align: left;
         }
         
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        .player-status {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        .dice-container {
+            margin: 30px 0;
+        }
+        
+        .dice {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 15px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #1a237e;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .dice:active {
+            transform: scale(0.95);
+        }
+        
+        .game-info {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <div class="header">
-            🎲 CLASSIC LUDO GAME
-        </div>
+        <h1 class="game-title">CLASSIC LUDO GAME</h1>
         
-        <div class="board-container">
-            <div class="board" id="board">
-                <!-- Player bases -->
-                <div class="cell red-base" id="red-base"></div>
-                <div class="cell green-base" id="green-base"></div>
-                <div class="cell yellow-base" id="yellow-base"></div>
-                <div class="cell blue-base" id="blue-base"></div>
-                
-                <!-- Center home -->
-                <div class="cell center-home">HOME</div>
-            </div>
-        </div>
+        <div class="current-player">Current player: Player 1 (Red)</div>
         
-        <div class="controls">
-            <div class="dice-container">
-                <div class="dice" id="dice">?</div>
+        <div class="players-container">
+            <div class="player player-1 active">
+                <div class="player-color"></div>
+                <div class="player-name">Player 1</div>
+                <div class="player-status">Your turn</div>
             </div>
             
-            <div class="status" id="status">
-                Current player: 
-                <span class="player-indicator" id="current-player" style="background: #e74c3c"></span>
-                <span id="player-name">Red</span>
+            <div class="player player-2">
+                <div class="player-color"></div>
+                <div class="player-name">Player 2</div>
+                <div class="player-status">Waiting</div>
             </div>
             
-            <div class="player-info">
-                <div class="player">
-                    <div class="player-color" style="background: #e74c3c"></div>
-                    <span>Player 1</span>
-                </div>
-                <div class="player">
-                    <div class="player-color" style="background: #2ecc71"></div>
-                    <span>Player 2</span>
-                </div>
-                <div class="player">
-                    <div class="player-color" style="background: #f1c40f"></div>
-                    <span>Player 3</span>
-                </div>
-                <div class="player">
-                    <div class="player-color" style="background: #3498db"></div>
-                    <span>Player 4</span>
-                </div>
+            <div class="player player-3">
+                <div class="player-color"></div>
+                <div class="player-name">Player 3</div>
+                <div class="player-status">Waiting</div>
+            </div>
+            
+            <div class="player player-4">
+                <div class="player-color"></div>
+                <div class="player-name">Player 4</div>
+                <div class="player-status">Waiting</div>
             </div>
         </div>
+        
+        <div class="dice-container">
+            <div class="dice">4</div>
+        </div>
+        
+        <div class="game-info">Tap dice to roll | Red's turn</div>
     </div>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const board = document.getElementById('board');
-            const dice = document.getElementById('dice');
-            const status = document.getElementById('status');
-            const currentPlayerIndicator = document.getElementById('current-player');
-            const playerName = document.getElementById('player-name');
+        const players = document.querySelectorAll('.player');
+        const dice = document.querySelector('.dice');
+        const currentPlayerDisplay = document.querySelector('.current-player');
+        
+        let currentPlayer = 1;
+        
+        dice.addEventListener('click', rollDice);
+        
+        function rollDice() {
+            // Disable dice during roll
+            dice.style.pointerEvents = 'none';
             
-            // Game state
-            const gameState = {
-                currentPlayer: 'red',
-                diceValue: 0,
-                players: {
-                    red: { name: 'Player 1 (Red)', color: '#e74c3c' },
-                    green: { name: 'Player 2 (Green)', color: '#2ecc71' },
-                    yellow: { name: 'Player 3 (Yellow)', color: '#f1c40f' },
-                    blue: { name: 'Player 4 (Blue)', color: '#3498db' }
-                }
-            };
-            
-            // Create board with paths
-            function createBoard() {
-                for (let row = 0; row < 15; row++) {
-                    for (let col = 0; col < 15; col++) {
-                        // Skip base and home areas
-                        if ((row < 5 && col < 5) || (row < 5 && col > 9) || 
-                            (row > 9 && col < 5) || (row > 9 && col > 9) ||
-                            (row > 5 && row < 9 && col > 5 && col < 9)) {
-                            continue;
-                        }
-                        
-                        const cell = document.createElement('div');
-                        cell.classList.add('cell', 'path');
-                        cell.dataset.row = row;
-                        cell.dataset.col = col;
-                        
-                        // Color the paths
-                        if (row === 7 && col < 5) cell.classList.add('red-path');
-                        else if (row < 5 && col === 7) cell.classList.add('green-path');
-                        else if (row === 7 && col > 9) cell.classList.add('yellow-path');
-                        else if (row > 9 && col === 7) cell.classList.add('blue-path');
-                        
-                        board.appendChild(cell);
-                    }
-                }
-            }
-            
-            // Add tokens to bases
-            function addTokens() {
-                const positions = [
-                    {top: '15%', left: '15%'},
-                    {top: '15%', left: '60%'},
-                    {top: '60%', left: '15%'},
-                    {top: '60%', left: '60%'}
-                ];
+            // Roll animation
+            let rolls = 0;
+            const rollInterval = setInterval(() => {
+                const randomNum = Math.floor(Math.random() * 6) + 1;
+                dice.textContent = randomNum;
+                rolls++;
                 
-                // Add red tokens
-                positions.forEach(pos => {
-                    const token = document.createElement('div');
-                    token.classList.add('token', 'red-token');
-                    token.style.top = pos.top;
-                    token.style.left = pos.left;
-                    token.textContent = '1';
-                    document.getElementById('red-base').appendChild(token);
-                });
-                
-                // Add green tokens
-                positions.forEach(pos => {
-                    const token = document.createElement('div');
-                    token.classList.add('token', 'green-token');
-                    token.style.top = pos.top;
-                    token.style.left = pos.left;
-                    token.textContent = '2';
-                    document.getElementById('green-base').appendChild(token);
-                });
-                
-                // Add yellow tokens
-                positions.forEach(pos => {
-                    const token = document.createElement('div');
-                    token.classList.add('token', 'yellow-token');
-                    token.style.top = pos.top;
-                    token.style.left = pos.left;
-                    token.textContent = '3';
-                    document.getElementById('yellow-base').appendChild(token);
-                });
-                
-                // Add blue tokens
-                positions.forEach(pos => {
-                    const token = document.createElement('div');
-                    token.classList.add('token', 'blue-token');
-                    token.style.top = pos.top;
-                    token.style.left = pos.left;
-                    token.textContent = '4';
-                    document.getElementById('blue-base').appendChild(token);
-                });
-            }
-            
-            // Roll dice function
-            dice.addEventListener('click', rollDice);
-            
-            function rollDice() {
-                if (dice.classList.contains('dice-rolling')) return;
-                
-                dice.classList.add('dice-rolling');
-                status.textContent = "Rolling dice...";
-                
-                setTimeout(() => {
-                    const roll = Math.floor(Math.random() * 6) + 1;
-                    dice.textContent = roll;
-                    dice.classList.remove('dice-rolling');
+                if (rolls > 10) {
+                    clearInterval(rollInterval);
+                    const finalNum = Math.floor(Math.random() * 6) + 1;
+                    dice.textContent = finalNum;
                     
-                    gameState.diceValue = roll;
-                    updateStatus();
-                    
-                    // For demo: switch player after roll
-                    setTimeout(switchPlayer, 1500);
-                }, 1500);
-            }
+                    // Move to next player after a delay
+                    setTimeout(nextPlayer, 1000);
+                }
+            }, 100);
+        }
+        
+        function nextPlayer() {
+            // Remove active class from current player
+            players[currentPlayer - 1].classList.remove('active');
             
-            function updateStatus() {
-                const player = gameState.players[gameState.currentPlayer];
-                currentPlayerIndicator.style.background = player.color;
-                playerName.textContent = player.name;
-                status.innerHTML = `Current player: <span class="player-indicator" style="background: ${player.color}"></span> ${player.name}`;
-            }
+            // Update player index
+            currentPlayer = currentPlayer % 4 + 1;
             
-            function switchPlayer() {
-                const players = ['red', 'green', 'yellow', 'blue'];
-                const currentIndex = players.indexOf(gameState.currentPlayer);
-                gameState.currentPlayer = players[(currentIndex + 1) % players.length];
-                
-                updateStatus();
-                status.innerHTML += `<br>Rolled ${gameState.diceValue}!`;
-            }
+            // Add active class to next player
+            players[currentPlayer - 1].classList.add('active');
             
-            // Initialize game
-            createBoard();
-            addTokens();
-            updateStatus();
-        });
+            // Update display
+            const colors = ['Red', 'Blue', 'Green', 'Yellow'];
+            currentPlayerDisplay.textContent = `Current player: Player ${currentPlayer} (${colors[currentPlayer - 1]})`;
+            
+            // Re-enable dice
+            dice.style.pointerEvents = 'auto';
+        }
     </script>
 </body>
 </html>
