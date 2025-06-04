@@ -566,28 +566,6 @@
     </div>
 
     <script>
-        // Game state
-        const players = [
-            {
-                id: 1,
-                name: "Albante",
-                username: "@albante_gamer",
-                color: "red",
-                status: "Full 1",
-                active: true,
-                score: 2.840
-            },
-            {
-                id: 2,
-                name: "Ugraft",
-                username: "@ugraft_bot",
-                color: "green",
-                status: "Full 2",
-                active: false,
-                score: 4.070
-            }
-        ];
-        
         // DOM elements
         const connectionView = document.querySelector('.connection-view');
         const waitingRoomView = document.querySelector('.waiting-room-view');
@@ -598,6 +576,10 @@
         const dice = document.getElementById('dice');
         const diceValueDisplay = document.getElementById('dice-value');
         
+        // Game state
+        let gameActive = false;
+        let currentPlayer = "Albante";
+        
         // Switch views
         function showView(view) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -607,7 +589,7 @@
         // Create room
         document.getElementById('create-btn').addEventListener('click', () => {
             const playerName = document.getElementById('player-name').value || "Player";
-            const roomId = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const roomId = generateRoomId();
             
             roomIdDisplay.textContent = roomId;
             showView(waitingRoomView);
@@ -624,4 +606,19 @@
                     </div>
                 </div>
             `;
+            
+            // Simulate other players joining
+            simulatePlayersJoining();
         });
+        
+        // Join room
+        document.getElementById('join-btn').addEventListener('click', () => {
+            const playerName = document.getElementById('player-name').value || "Player";
+            const roomId = document.getElementById('room-id').value;
+            
+            if (!roomId) {
+                alert("Please enter a room ID");
+                return;
+            }
+            
+    
