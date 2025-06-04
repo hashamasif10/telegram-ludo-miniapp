@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ludo Game - Online Multiplayer</title>
+    <title>Ludo Mini App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,55 +15,73 @@
         }
         
         body {
-            background: linear-gradient(135deg, #1a237e, #311b92);
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
             color: #fff;
         }
         
-        .container {
+        .telegram-app {
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
+            background: rgba(25, 25, 35, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            border: 1px solid #444;
         }
         
-        .card {
-            background: rgba(0, 0, 0, 0.85);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid #4a148c;
-            transition: all 0.5s ease;
+        .app-header {
+            background: linear-gradient(to right, #2a3f5f, #1a2a4a);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
         }
         
         .view {
             display: none;
+            padding: 20px;
+            min-height: 500px;
         }
         
         .view.active {
             display: block;
         }
         
-        .header {
+        /* Connection View */
+        .connection-view .welcome {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         
-        .game-title {
+        .welcome h1 {
             font-size: 28px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             color: #ffeb3b;
-            text-shadow: 0 0 10px rgba(255, 235, 59, 0.7);
-            letter-spacing: 1.5px;
         }
         
-        .subtitle {
-            color: #b388ff;
-            margin-bottom: 25px;
+        .welcome p {
+            color: #b3e5fc;
+            font-size: 16px;
         }
         
         .form-group {
@@ -95,7 +114,7 @@
             padding: 14px;
             border-radius: 12px;
             border: none;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             background: linear-gradient(to right, #9c27b0, #673ab7);
@@ -116,6 +135,32 @@
         
         .btn-secondary {
             background: linear-gradient(to right, #2196F3, #1976D2);
+        }
+        
+        /* Waiting Room View */
+        .waiting-room-view .room-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .room-id {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #ffeb3b;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 15px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        
+        .status-message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(33, 150, 243, 0.3);
+            margin: 15px 0;
+            font-weight: 500;
         }
         
         .players-container {
@@ -182,26 +227,24 @@
             color: #b3e5fc;
         }
         
-        .waiting-message {
-            text-align: center;
-            padding: 20px;
-            color: #e1bee7;
-            font-size: 18px;
-        }
-        
+        /* Game View */
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .current-player {
             background: linear-gradient(to right, #e91e63, #f44336);
-            padding: 10px 15px;
+            padding: 8px 15px;
             border-radius: 30px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
+            max-width: 70%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .scores {
@@ -210,9 +253,9 @@
         }
         
         .score {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            padding: 5px 15px;
+            padding: 5px 12px;
             border-radius: 20px;
             background: rgba(255, 255, 255, 0.1);
         }
@@ -225,7 +268,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
             padding: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .ludo-board {
@@ -290,23 +333,23 @@
         
         .center-piece .star {
             color: #9c27b0;
-            font-size: 30px;
+            font-size: 24px;
         }
         
         .dice-container {
             text-align: center;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         .dice {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             display: inline-flex;
             justify-content: center;
             align-items: center;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             color: #1a237e;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
@@ -320,7 +363,7 @@
         }
         
         .dice-value {
-            font-size: 18px;
+            font-size: 16px;
             color: #ffeb3b;
             font-weight: bold;
             margin-top: 10px;
@@ -328,53 +371,19 @@
         
         .game-instruction {
             text-align: center;
-            font-size: 16px;
+            font-size: 14px;
             color: #e1bee7;
-            margin-top: 15px;
+            margin-top: 10px;
         }
         
-        .status-message {
-            text-align: center;
-            padding: 15px;
-            border-radius: 12px;
-            background: rgba(33, 150, 243, 0.3);
-            margin: 15px 0;
-            font-weight: 500;
-        }
-        
-        .corner-deco {
+        .player-tag {
             position: absolute;
-            width: 40px;
-            height: 40px;
-            z-index: -1;
-        }
-        
-        .corner-deco.tl {
-            top: 0;
-            left: 0;
-            border-top: 2px solid #ffeb3b;
-            border-left: 2px solid #ffeb3b;
-        }
-        
-        .corner-deco.tr {
-            top: 0;
-            right: 0;
-            border-top: 2px solid #ffeb3b;
-            border-right: 2px solid #ffeb3b;
-        }
-        
-        .corner-deco.bl {
-            bottom: 0;
-            left: 0;
-            border-bottom: 2px solid #ffeb3b;
-            border-left: 2px solid #ffeb3b;
-        }
-        
-        .corner-deco.br {
-            bottom: 0;
-            right: 0;
-            border-bottom: 2px solid #ffeb3b;
-            border-right: 2px solid #ffeb3b;
+            top: 10px;
+            right: 15px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
         }
         
         /* Animation for dice */
@@ -392,11 +401,12 @@
         
         .token {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
             z-index: 10;
+            transition: all 0.5s ease;
         }
         
         .token.red {
@@ -419,206 +429,219 @@
             border: 2px solid #2962ff;
         }
         
-        .player-tag {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
         .player-1 .player-tag { background: rgba(244, 67, 54, 0.4); color: #ffcdd2; }
         .player-2 .player-tag { background: rgba(76, 175, 80, 0.4); color: #c8e6c9; }
         .player-3 .player-tag { background: rgba(255, 235, 59, 0.4); color: #333; }
         .player-4 .player-tag { background: rgba(33, 150, 243, 0.4); color: #bbdefb; }
+        
+        .players-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .player-mini-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            overflow: hidden;
+        }
+        
+        .player-mini-card.active {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+        }
+        
+        .player-mini-pfp {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .player-mini-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70px;
+        }
+        
+        .app-footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #b388ff;
+            border-top: 1px solid #333;
+            background: rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <!-- Connection View -->
-            <div class="view connection-view active">
-                <div class="header">
-                    <h1 class="game-title">LUDO GAME</h1>
-                    <p class="subtitle">Online Multiplayer</p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="player-name">Your Name</label>
-                    <input type="text" id="player-name" class="form-control" placeholder="Enter your name" value="Albante">
-                </div>
-                
-                <div class="form-group">
-                    <label for="room-id">Room ID (to join)</label>
-                    <input type="text" id="room-id" class="form-control" placeholder="Enter room ID">
-                </div>
-                
-                <button class="btn" id="create-btn">Create Room</button>
-                <button class="btn btn-secondary" id="join-btn">Join Room</button>
+    <div class="telegram-app">
+        <div class="app-header">
+            <button class="back-btn" id="back-btn"><i class="fas fa-arrow-left"></i></button>
+            <div class="app-title">Ludo Mini App</div>
+        </div>
+        
+        <!-- Connection View -->
+        <div class="view connection-view active">
+            <div class="welcome">
+                <h1>LUDO GAME</h1>
+                <p>Play with friends in Telegram!</p>
             </div>
             
-            <!-- Waiting Room View -->
-            <div class="view waiting-room-view">
-                <div class="header">
-                    <h1 class="game-title">WAITING ROOM</h1>
-                    <p class="subtitle">Room ID: <span id="room-id-display">ABCD12</span></p>
-                </div>
-                
-                <div class="status-message">
-                    Waiting for players to join (2-4 players needed)
-                </div>
-                
-                <div class="players-container" id="players-list">
-                    <div class="player-card host">
-                        <div class="player-pfp">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <div class="player-details">
-                            <div class="player-name">Albante</div>
-                            <div class="player-id">@albante_gamer</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="btn" id="start-btn" disabled>Start Game (Need 2+ Players)</button>
-                <button class="btn btn-secondary" id="leave-btn">Leave Room</button>
+            <div class="form-group">
+                <label for="player-name">Your Name</label>
+                <input type="text" id="player-name" class="form-control" placeholder="Enter your name" value="Albante">
             </div>
             
-            <!-- Game View -->
-            <div class="view game-view">
-                <div class="game-header">
-                    <div class="current-player">Albante (Red)</div>
-                    <div class="scores">
-                        <div class="score">2.840</div>
-                        <div class="score">4.070</div>
+            <div class="form-group">
+                <label for="room-id">Room ID (to join)</label>
+                <input type="text" id="room-id" class="form-control" placeholder="Enter room ID">
+            </div>
+            
+            <button class="btn" id="create-btn">Create Room</button>
+            <button class="btn btn-secondary" id="join-btn">Join Room</button>
+            
+            <div class="app-footer">
+                Play Ludo with friends • Mini App for Telegram
+            </div>
+        </div>
+        
+        <!-- Waiting Room View -->
+        <div class="view waiting-room-view">
+            <div class="room-info">
+                <h2>Waiting Room</h2>
+                <div class="room-id">ID: ABCD12</div>
+                <p>Share this ID with friends</p>
+            </div>
+            
+            <div class="status-message">
+                Waiting for players to join (2-4 players needed)
+            </div>
+            
+            <div class="players-container" id="players-list">
+                <div class="player-card host">
+                    <div class="player-pfp">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="player-details">
+                        <div class="player-name">Albante</div>
+                        <div class="player-id">@albante_gamer</div>
                     </div>
                 </div>
-                
-                <div class="board-container">
-                    <div class="ludo-board">
-                        <div class="home red"></div>
-                        <div class="home green"></div>
-                        <div class="home yellow"></div>
-                        <div class="home blue"></div>
-                        
-                        <div class="center">
-                            <div class="center-piece">
-                                <div class="star">★</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Tokens -->
-                        <div class="token red" style="top: 15%; left: 15%;"></div>
-                        <div class="token red" style="top: 15%; left: 35%;"></div>
-                        <div class="token red" style="top: 35%; left: 15%;"></div>
-                        <div class="token red" style="top: 35%; left: 35%;"></div>
-                        
-                        <div class="token green" style="top: 15%; left: 85%;"></div>
-                        <div class="token green" style="top: 15%; left: 65%;"></div>
-                        <div class="token green" style="top: 35%; left: 85%;"></div>
-                        <div class="token green" style="top: 35%; left: 65%;"></div>
-                    </div>
+            </div>
+            
+            <button class="btn" id="start-btn" disabled>Start Game (Need 2+ Players)</button>
+            <button class="btn btn-secondary" id="leave-btn">Leave Room</button>
+        </div>
+        
+        <!-- Game View -->
+        <div class="view game-view">
+            <div class="game-header">
+                <div class="current-player">Albante (Red)</div>
+                <div class="scores">
+                    <div class="score">2.84</div>
+                    <div class="score">4.07</div>
                 </div>
-                
-                <div class="dice-container">
-                    <div class="dice" id="dice">6</div>
-                    <div class="dice-value" id="dice-value">Tap to roll the dice!</div>
-                </div>
-                
-                <div class="players-container">
-                    <div class="player-card player-1 active">
-                        <div class="player-pfp">
-                            <i class="fas fa-crown"></i>
+            </div>
+            
+            <div class="board-container">
+                <div class="ludo-board">
+                    <div class="home red"></div>
+                    <div class="home green"></div>
+                    <div class="home yellow"></div>
+                    <div class="home blue"></div>
+                    
+                    <div class="center">
+                        <div class="center-piece">
+                            <div class="star">★</div>
                         </div>
-                        <div class="player-details">
-                            <div class="player-name">Albante</div>
-                            <div class="player-id">@albante_gamer</div>
-                            <div class="player-status">Full 1</div>
-                        </div>
-                        <div class="player-tag">Red</div>
                     </div>
                     
-                    <div class="player-card player-2">
-                        <div class="player-pfp">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="player-details">
-                            <div class="player-name">Ugraft</div>
-                            <div class="player-id">@ugraft_bot</div>
-                            <div class="player-status">Full 2</div>
-                        </div>
-                        <div class="player-tag">Green</div>
-                    </div>
-                </div>
-                
-                <div class="game-instruction">
-                    Red's turn - Tap dice to roll
+                    <!-- Tokens -->
+                    <div class="token red" style="top: 15%; left: 15%;"></div>
+                    <div class="token red" style="top: 15%; left: 35%;"></div>
+                    <div class="token red" style="top: 35%; left: 15%;"></div>
+                    <div class="token red" style="top: 35%; left: 35%;"></div>
+                    
+                    <div class="token green" style="top: 15%; left: 85%;"></div>
+                    <div class="token green" style="top: 15%; left: 65%;"></div>
+                    <div class="token green" style="top: 35%; left: 85%;"></div>
+                    <div class="token green" style="top: 35%; left: 65%;"></div>
                 </div>
             </div>
             
-            <div class="corner-deco tl"></div>
-            <div class="corner-deco tr"></div>
-            <div class="corner-deco bl"></div>
-            <div class="corner-deco br"></div>
+            <div class="dice-container">
+                <div class="dice" id="dice">6</div>
+                <div class="dice-value" id="dice-value">Tap to roll the dice!</div>
+            </div>
+            
+            <div class="players-grid">
+                <div class="player-mini-card active">
+                    <div class="player-mini-pfp" style="background: linear-gradient(135deg, #f44336, #d32f2f);">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="player-mini-name">Albante</div>
+                </div>
+                
+                <div class="player-mini-card">
+                    <div class="player-mini-pfp" style="background: linear-gradient(135deg, #4CAF50, #388E3C);">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="player-mini-name">Ugraft</div>
+                </div>
+                
+                <div class="player-mini-card">
+                    <div class="player-mini-pfp" style="background: linear-gradient(135deg, #FFEB3B, #FBC02D);">
+                        <i class="fas fa-ad"></i>
+                    </div>
+                    <div class="player-mini-name">Virtual</div>
+                </div>
+                
+                <div class="player-mini-card">
+                    <div class="player-mini-pfp" style="background: linear-gradient(135deg, #2196F3, #1976D2);">
+                        <i class="fas fa-user-ninja"></i>
+                    </div>
+                    <div class="player-mini-name">Shadow</div>
+                </div>
+            </div>
+            
+            <div class="game-instruction">
+                Red's turn - Tap dice to roll
+            </div>
         </div>
     </div>
 
     <script>
+        // Initialize Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+        
         // DOM elements
         const connectionView = document.querySelector('.connection-view');
         const waitingRoomView = document.querySelector('.waiting-room-view');
         const gameView = document.querySelector('.game-view');
         const playersList = document.getElementById('players-list');
         const startBtn = document.getElementById('start-btn');
-        const roomIdDisplay = document.getElementById('room-id-display');
+        const backBtn = document.getElementById('back-btn');
         const dice = document.getElementById('dice');
         const diceValueDisplay = document.getElementById('dice-value');
         
         // Game state
         let gameActive = false;
         let currentPlayer = "Albante";
+        let playerName = "Albante";
         
         // Switch views
         function showView(view) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            view.classList.add('active');
-        }
-        
-        // Create room
-        document.getElementById('create-btn').addEventListener('click', () => {
-            const playerName = document.getElementById('player-name').value || "Player";
-            const roomId = generateRoomId();
-            
-            roomIdDisplay.textContent = roomId;
-            showView(waitingRoomView);
-            
-            // Add host player
-            playersList.innerHTML = `
-                <div class="player-card host">
-                    <div class="player-pfp">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="player-details">
-                        <div class="player-name">${playerName}</div>
-                        <div class="player-id">${playerName.toLowerCase().replace(' ', '_')}</div>
-                    </div>
-                </div>
-            `;
-            
-            // Simulate other players joining
-            simulatePlayersJoining();
-        });
-        
-        // Join room
-        document.getElementById('join-btn').addEventListener('click', () => {
-            const playerName = document.getElementById('player-name').value || "Player";
-            const roomId = document.getElementById('room-id').value;
-            
-            if (!roomId) {
-                alert("Please enter a room ID");
-                return;
-            }
-            
-    
+            document.querySelectorAll('.view'
