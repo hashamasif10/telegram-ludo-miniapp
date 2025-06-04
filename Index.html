@@ -5,38 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram Ludo Mini App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #2575fc);
             color: #fff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            position: relative;
             overflow: hidden;
+            position: relative;
         }
         
         .container {
             width: 100%;
             max-width: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
+            background: rgba(25, 25, 35, 0.9);
             border-radius: 25px;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
-            z-index: 2;
+            z-index: 10;
         }
         
         .background-dots {
@@ -47,125 +45,60 @@
             height: 100%;
             background: 
                 radial-gradient(circle at 10% 20%, rgba(255,255,255,0.05) 1px, transparent 2px),
-                radial-gradient(circle at 80% 60%, rgba(255,255,255,0.05) 1px, transparent 2px);
-            background-size: 50px 50px;
+                radial-gradient(circle at 90% 70%, rgba(255,255,255,0.05) 1px, transparent 2px);
+            background-size: 60px 60px;
             z-index: 1;
         }
         
         header {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.4);
             padding: 20px;
             text-align: center;
-            position: relative;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         header h1 {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             letter-spacing: 1px;
             margin-bottom: 5px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             font-weight: 700;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #a1c4fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         header p {
-            font-size: 1rem;
+            font-size: 1.1rem;
             opacity: 0.9;
             margin-bottom: 15px;
-            font-weight: 300;
-        }
-        
-        .profile {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px 20px;
-            border-radius: 50px;
-            margin: 10px auto;
-            width: fit-content;
-            transition: transform 0.3s ease;
-        }
-        
-        .profile:hover {
-            transform: scale(1.03);
-        }
-        
-        .avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            overflow: hidden;
-            border: 2px solid white;
-        }
-        
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .user-info {
-            text-align: left;
-        }
-        
-        .user-info h2 {
-            font-size: 1.2rem;
-            margin-bottom: 3px;
-            font-weight: 600;
-        }
-        
-        .user-info p {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4caf50;
-            display: inline-block;
+            color: #a0d2eb;
         }
         
         .main-content {
-            padding: 30px 25px;
+            padding: 25px;
         }
         
         .section {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(40, 40, 60, 0.8);
             border-radius: 20px;
             padding: 25px;
             margin-bottom: 25px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .section-title {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 18px;
-            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            color: #ffd700;
         }
         
         .section-title i {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 215, 0, 0.2);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -176,15 +109,15 @@
         }
         
         .input-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
         
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            padding-left: 5px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #a0d2eb;
         }
         
         input {
@@ -192,21 +125,20 @@
             padding: 15px 20px;
             border-radius: 15px;
             border: none;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(30, 30, 50, 0.8);
             color: white;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             outline: none;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.5);
         }
         
         input:focus {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(255, 255, 255, 0.4);
+            border-color: #ffd700;
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.3);
         }
         
         .btn {
@@ -226,7 +158,7 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #ff6b6b, #ff5252);
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
             color: white;
             box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
         }
@@ -236,37 +168,14 @@
             box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
         }
         
-        .btn-primary:active {
-            transform: translateY(1px);
-        }
-        
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
             margin-top: 15px;
         }
         
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .room-id-display {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 18px;
-            border-radius: 15px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .room-id {
-            font-weight: bold;
-            font-size: 1.6rem;
-            letter-spacing: 3px;
-            margin: 15px 0;
-            color: #ffeb3b;
-            text-shadow: 0 0 10px rgba(255, 235, 59, 0.3);
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .players {
@@ -277,37 +186,33 @@
         }
         
         .player {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(50, 50, 70, 0.7);
             padding: 20px 15px;
             border-radius: 18px;
             text-align: center;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .player:hover {
             transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(60, 60, 80, 0.8);
         }
         
         .player-avatar {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.8rem;
-            border: 3px solid white;
+            font-size: 2rem;
+            border: 3px solid;
             overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .player-avatar:hover {
-            transform: scale(1.1);
+            background: #2c2c4c;
         }
         
         .player-avatar img {
@@ -317,25 +222,25 @@
         }
         
         .player-name {
-            font-weight: 600;
-            font-size: 1.1rem;
+            font-weight: 700;
+            font-size: 1.2rem;
             margin-bottom: 5px;
         }
         
         .player-username {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             opacity: 0.8;
-            font-style: italic;
+            color: #a0d2eb;
         }
         
-        .player-1 { background: linear-gradient(135deg, rgba(255, 154, 158, 0.3), rgba(250, 208, 196, 0.3)); }
-        .player-2 { background: linear-gradient(135deg, rgba(161, 196, 253, 0.3), rgba(194, 233, 251, 0.3)); }
-        .player-3 { background: linear-gradient(135deg, rgba(255, 236, 210, 0.3), rgba(252, 182, 159, 0.3)); }
-        .player-4 { background: linear-gradient(135deg, rgba(132, 250, 176, 0.3), rgba(143, 211, 244, 0.3)); }
+        .player-1 .player-avatar { border-color: #ff6b6b; }
+        .player-2 .player-avatar { border-color: #4ecdc4; }
+        .player-3 .player-avatar { border-color: #ffd166; }
+        .player-4 .player-avatar { border-color: #06d6a0; }
         
-        .game-board {
+        .ludo-board {
             display: none;
-            padding: 25px;
+            padding: 20px;
             text-align: center;
         }
         
@@ -348,40 +253,66 @@
         
         .board {
             width: 100%;
-            background: #ffd54f;
+            background: #1e1e2e;
             aspect-ratio: 1/1;
             border-radius: 10px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             display: grid;
             grid-template-columns: repeat(15, 1fr);
             grid-template-rows: repeat(15, 1fr);
-            border: 5px solid #5d4037;
+            border: 5px solid #ffd700;
         }
         
         .cell {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
         }
         
         .home {
-            background: #e53935;
+            position: absolute;
             border-radius: 50%;
             width: 80%;
             height: 80%;
+            top: 10%;
+            left: 10%;
         }
         
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.1);
+        .red-home { background: #ff6b6b; }
+        .blue-home { background: #4ecdc4; }
+        .yellow-home { background: #ffd166; }
+        .green-home { background: #06d6a0; }
+        
+        .center-home {
+            position: absolute;
+            width: 33.33%;
+            height: 33.33%;
+            top: 33.33%;
+            left: 33.33%;
+            background: #ffd700;
+            border-radius: 50%;
         }
+        
+        .token {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .token:hover {
+            transform: scale(1.2);
+        }
+        
+        .red-token { background: #ff6b6b; border: 2px solid #ff3b3b; }
+        .blue-token { background: #4ecdc4; border: 2px solid #2a9d8f; }
+        .yellow-token { background: #ffd166; border: 2px solid #ffb700; }
+        .green-token { background: #06d6a0; border: 2px solid #049a6d; }
         
         .dice-container {
             margin: 25px auto;
@@ -409,7 +340,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.3);
             backface-visibility: hidden;
         }
         
@@ -456,9 +387,50 @@
         .face-6 .dot:nth-child(5) { bottom: 25%; left: 25%; }
         .face-6 .dot:nth-child(6) { bottom: 25%; right: 25%; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: rgba(40, 40, 60, 0.8);
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+        
+        .player-turn {
+            color: #ffd700;
+            font-size: 1.2rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background: rgba(40, 40, 60, 0.95);
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { top: -50px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
         }
         
         @keyframes rollDice {
@@ -467,21 +439,25 @@
         }
         
         @media (max-width: 480px) {
+            .container {
+                border-radius: 20px;
+            }
+            
             header h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
             
             .main-content {
-                padding: 20px 15px;
+                padding: 15px;
             }
             
             .section {
-                padding: 18px;
+                padding: 20px;
             }
             
             .player-avatar {
-                width: 60px;
-                height: 60px;
+                width: 70px;
+                height: 70px;
             }
         }
     </style>
@@ -493,16 +469,6 @@
         <header>
             <h1>LUDO GAME</h1>
             <p>Play with friends in Telegram!</p>
-            
-            <div class="profile">
-                <div class="avatar">
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Albante">
-                </div>
-                <div class="user-info">
-                    <h2>Albante</h2>
-                    <p><span class="status-dot"></span> Online</p>
-                </div>
-            </div>
         </header>
         
         <div class="main-content">
@@ -515,14 +481,6 @@
                 <button id="createRoomBtn" class="btn btn-primary">
                     <i class="fas fa-plus-circle"></i> Create Room
                 </button>
-                
-                <div id="roomCreated" class="room-id-display">
-                    <p>Room created! Share this ID with friends:</p>
-                    <div class="room-id">X7F9K2</div>
-                    <button class="btn btn-secondary">
-                        <i class="fab fa-telegram"></i> Share via Telegram
-                    </button>
-                </div>
             </div>
             
             <div class="section">
@@ -532,14 +490,14 @@
                 </div>
                 <div class="input-group">
                     <label for="roomId">Enter Room ID</label>
-                    <input type="text" id="roomId" placeholder="e.g. X7F9K2">
+                    <input type="text" id="roomId" placeholder="e.g. PANDA42">
                 </div>
                 <button id="joinRoomBtn" class="btn btn-primary">
                     <i class="fas fa-play"></i> Join Room
                 </button>
             </div>
             
-            <div id="gamePreview" class="section">
+            <div id="gameLobby" class="section">
                 <div class="section-title">
                     <i class="fas fa-users"></i>
                     <h3>Players in Room</h3>
@@ -548,51 +506,53 @@
                 <div class="players">
                     <div class="player player-1">
                         <div class="player-avatar">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Albante">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player 1">
                         </div>
-                        <div class="player-name">Albante</div>
-                        <div class="player-username">@albante_gamer</div>
+                        <div class="player-name">You</div>
+                        <div class="player-username">@telegram_user</div>
                     </div>
                     <div class="player player-2">
                         <div class="player-avatar">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah">
+                            <img src="https://cdn-icons-png.flaticon.com/512/194/194279.png" alt="Panda">
                         </div>
-                        <div class="player-name">Sarah</div>
-                        <div class="player-username">@sarah_champ</div>
+                        <div class="player-name">Panda</div>
+                        <div class="player-username">@telegram_panda</div>
                     </div>
                     <div class="player player-3">
                         <div class="player-avatar">
-                            <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="John">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Player 3">
+                        </div>
+                        <div class="player-name">Sarah</div>
+                        <div class="player-username">@sarah_gamer</div>
+                    </div>
+                    <div class="player player-4">
+                        <div class="player-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Player 4">
                         </div>
                         <div class="player-name">John</div>
                         <div class="player-username">@john_doe</div>
                     </div>
-                    <div class="player player-4">
-                        <div class="player-avatar">
-                            <img id="panda-avatar" src="https://cdn-icons-png.flaticon.com/512/194/194279.png" alt="Panda">
-                        </div>
-                        <div class="player-name" id="panda-name">Waiting...</div>
-                        <div class="player-username" id="panda-username">for player</div>
-                    </div>
                 </div>
                 
-                <button id="startGameBtn" class="btn btn-primary" style="margin-top: 20px;">
+                <button id="startGameBtn" class="btn btn-primary" style="margin-top: 25px;">
                     <i class="fas fa-dice"></i> Start Game
                 </button>
             </div>
         </div>
         
-        <div id="gameBoard" class="game-board">
-            <h2><i class="fas fa-chess-board"></i> Ludo Game Board</h2>
-            <p>Player: Albante | Turn: <span id="current-turn">Red</span></p>
+        <div id="gameBoard" class="ludo-board">
+            <div class="game-info">
+                <div class="player-turn">Your Turn: <span id="current-turn">Red</span></div>
+                <div class="dice-value">Roll: <span id="dice-value">-</span></div>
+            </div>
             
             <div class="board-container">
-                <div class="board">
+                <div class="board" id="ludoBoard">
                     <!-- Board will be generated with JS -->
                 </div>
             </div>
             
-            <div class="dice-container">
+            <div class="dice-container" id="diceContainer">
                 <div class="dice" id="dice">
                     <div class="dice-face dice-face-1 face-1">
                         <div class="dot"></div>
@@ -611,4 +571,35 @@
                         <div class="dot"></div>
                         <div class="dot"></div>
                         <div class="dot"></div>
- 
+                    </div>
+                    <div class="dice-face dice-face-5 face-5">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <div class="dice-face dice-face-6 face-6">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="rollDiceBtn" class="btn btn-primary">
+                <i class="fas fa-dice"></i> Roll Dice
+            </button>
+            
+            <button id="backToLobby" class="btn btn-secondary" style="margin-top: 15px;">
+                <i class="fas fa-arrow-left"></i> Back to Lobby
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>Play Ludo with friends • Mini App for Telegram</p>
+        </div>
+    </
