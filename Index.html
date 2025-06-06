@@ -101,12 +101,21 @@
             border-radius: 50%;
             overflow: hidden;
             border: 3px solid #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2c3e50;
         }
 
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .avatar i {
+            font-size: 1.8rem;
+            color: #ecf0f1;
         }
 
         .player-details {
@@ -173,6 +182,10 @@
             background: linear-gradient(45deg, #4a69bd, #6a89cc);
         }
 
+        .btn-tertiary {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        }
+
         .lobby {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 15px;
@@ -200,6 +213,12 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            transition: transform 0.3s;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .player-card .avatar {
@@ -233,31 +252,66 @@
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
         }
 
-        .board-grid {
-            display: grid;
-            grid-template-columns: repeat(15, 1fr);
-            grid-template-rows: repeat(15, 1fr);
+        .board-container {
+            position: relative;
+            width: 100%;
             aspect-ratio: 1/1;
-            gap: 2px;
-            background: #000;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="100" fill="%23b58863"/><path d="M50,0 L50,100 M0,50 L100,50" stroke="%23000" stroke-width="2"/></svg>');
+            background-size: 100% 100%;
             border: 3px solid #8b4513;
         }
 
-        .cell {
-            background: #f0d9b5;
+        .board-cell {
+            position: absolute;
+            width: 10%;
+            height: 10%;
+            border-radius: 50%;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
         }
 
-        .home {
-            background: #b58863;
+        .piece {
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        .red { background: #ff5252; }
-        .green { background: #4caf50; }
-        .yellow { background: #ffd600; }
-        .blue { background: #2196f3; }
+        .red .piece { background: #ff5252; }
+        .green .piece { background: #4caf50; }
+        .yellow .piece { background: #ffd600; }
+        .blue .piece { background: #2196f3; }
+
+        .home-base {
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            border-radius: 10px;
+        }
+
+        .home-red { 
+            top: 5%; 
+            left: 5%; 
+            background: #ff5252; 
+        }
+        .home-green { 
+            top: 5%; 
+            right: 5%; 
+            background: #4caf50; 
+        }
+        .home-yellow { 
+            bottom: 5%; 
+            left: 5%; 
+            background: #ffd600; 
+        }
+        .home-blue { 
+            bottom: 5%; 
+            right: 5%; 
+            background: #2196f3; 
+        }
 
         .dice-container {
             display: flex;
@@ -330,6 +384,36 @@
             margin-bottom: 8px;
         }
 
+        .join-room-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: 500;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
         footer {
             text-align: center;
             padding: 20px;
@@ -364,6 +448,12 @@
                 width: 50px;
                 height: 50px;
             }
+            
+            .dice {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
@@ -384,16 +474,16 @@
             <div id="homeScreen" class="screen active">
                 <div class="player-info">
                     <div class="avatar">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+                        <img id="userAvatar" src="" alt="Profile">
                     </div>
                     <div class="player-details">
-                        <div class="player-name">John Doe</div>
-                        <div class="player-status online">Online</div>
+                        <div class="player-name" id="userName">Loading...</div>
+                        <div class="player-status online" id="userStatus">Online</div>
                     </div>
                 </div>
 
                 <div class="btn-group">
-                    <button class="btn" onclick="showScreen('createRoomScreen')">
+                    <button class="btn btn-tertiary" onclick="showScreen('createRoomScreen')">
                         <i class="fas fa-plus-circle"></i> Create Room
                     </button>
                     <button class="btn btn-secondary" onclick="showScreen('joinRoomScreen')">
@@ -416,53 +506,58 @@
             <div id="createRoomScreen" class="screen">
                 <div class="player-info">
                     <div class="avatar">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+                        <img id="hostAvatar" src="" alt="Profile">
                     </div>
                     <div class="player-details">
-                        <div class="player-name">Room Owner: John Doe</div>
+                        <div class="player-name" id="hostName">Room Owner</div>
                         <div class="player-status online">Creating room...</div>
                     </div>
                 </div>
 
                 <div class="lobby">
                     <h2>Waiting for players</h2>
-                    <div class="players-grid">
-                        <div class="player-card">
-                            <div class="avatar">
-                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player 1">
-                            </div>
-                            <div class="player-name">John (You)</div>
-                        </div>
-                        <div class="player-card">
-                            <div class="avatar">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="player-name">Waiting...</div>
-                        </div>
-                        <div class="player-card">
-                            <div class="avatar">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="player-name">Waiting...</div>
-                        </div>
-                        <div class="player-card">
-                            <div class="avatar">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="player-name">Waiting...</div>
-                        </div>
+                    <div class="players-grid" id="lobbyPlayers">
+                        <!-- Players will be added dynamically -->
                     </div>
                 </div>
 
-                <div class="room-code">CODE: X7F9K3</div>
+                <div class="room-code" id="roomCodeDisplay">Generating room code...</div>
 
                 <div class="btn-group">
                     <button class="btn" onclick="shareRoomCode()">
                         <i class="fab fa-telegram"></i> Share via Telegram
                     </button>
-                    <button class="btn btn-secondary" onclick="startGame()">
+                    <button class="btn btn-tertiary" id="startGameBtn" onclick="startGame()">
                         <i class="fas fa-play"></i> Start Game
                     </button>
+                    <button class="btn" onclick="showScreen('homeScreen')" style="background: rgba(255,255,255,0.2);">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+
+            <!-- Join Room Screen -->
+            <div id="joinRoomScreen" class="screen">
+                <div class="player-info">
+                    <div class="avatar">
+                        <img id="joinAvatar" src="" alt="Profile">
+                    </div>
+                    <div class="player-details">
+                        <div class="player-name" id="joinName">Join a Game</div>
+                        <div class="player-status">Enter room code to join</div>
+                    </div>
+                </div>
+
+                <div class="join-room-form">
+                    <div class="input-group">
+                        <label for="roomCodeInput">Room Code</label>
+                        <input type="text" id="roomCodeInput" placeholder="Enter 6-digit code" maxlength="6">
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="joinRoom()">
+                        <i class="fas fa-sign-in-alt"></i> Join Room
+                    </button>
+                    
                     <button class="btn" onclick="showScreen('homeScreen')" style="background: rgba(255,255,255,0.2);">
                         <i class="fas fa-arrow-left"></i> Back
                     </button>
@@ -473,17 +568,23 @@
             <div id="gameScreen" class="screen">
                 <div class="player-info">
                     <div class="avatar">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
+                        <img id="gameAvatar" src="" alt="Profile">
                     </div>
                     <div class="player-details">
-                        <div class="player-name">John Doe</div>
-                        <div class="player-status">Room: X7F9K3</div>
+                        <div class="player-name" id="gamePlayerName">Player</div>
+                        <div class="player-status" id="gameRoomCode">Room: Loading...</div>
                     </div>
                 </div>
 
                 <div class="game-board">
-                    <div class="board-grid">
-                        <!-- Board will be generated with JavaScript -->
+                    <div class="board-container">
+                        <!-- Home bases -->
+                        <div class="home-base home-red"></div>
+                        <div class="home-base home-green"></div>
+                        <div class="home-base home-yellow"></div>
+                        <div class="home-base home-blue"></div>
+                        
+                        <!-- Game pieces will be placed here -->
                     </div>
                 </div>
 
@@ -492,8 +593,8 @@
                 </div>
 
                 <div class="game-info">
-                    <div class="turn-indicator">Your turn!</div>
-                    <div class="status">Roll the dice</div>
+                    <div class="turn-indicator" id="turnIndicator">Your turn!</div>
+                    <div class="status" id="gameStatus">Roll the dice</div>
                 </div>
 
                 <div class="btn-group">
@@ -515,135 +616,55 @@
         tg.expand();
         tg.enableClosingConfirmation();
         
-        // Mock user data (in real app, get from Telegram)
-        const userData = {
-            id: 123456789,
-            firstName: "John",
-            lastName: "Doe",
-            photoUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-            username: "johndoe"
-        };
-        
         // Game state
         const gameState = {
-            players: [
-                { id: 1, name: "John", color: "red", position: 0, pieces: [0, 0, 0, 0] },
-                { id: 2, name: "Sarah", color: "green", position: 0, pieces: [0, 0, 0, 0] },
-                { id: 3, name: "Mike", color: "yellow", position: 0, pieces: [0, 0, 0, 0] },
-                { id: 4, name: "Emma", color: "blue", position: 0, pieces: [0, 0, 0, 0] }
-            ],
+            players: [],
             currentPlayer: 0,
             diceValue: 1,
-            roomCode: "X7F9K3",
-            gameStarted: false
+            roomCode: "",
+            gameStarted: false,
+            positions: {},
+            playerColors: ['red', 'green', 'yellow', 'blue']
         };
         
         // DOM elements
         const screens = {
             home: document.getElementById('homeScreen'),
             create: document.getElementById('createRoomScreen'),
+            join: document.getElementById('joinRoomScreen'),
             game: document.getElementById('gameScreen')
         };
         
         // Initialize the app
         function initApp() {
-            updatePlayerInfo();
-            renderBoard();
-        }
-        
-        // Update player info with Telegram data
-        function updatePlayerInfo() {
-            const playerInfo = document.querySelector('.player-info');
-            const avatar = playerInfo.querySelector('.avatar img');
-            const name = playerInfo.querySelector('.player-name');
+            // Get Telegram user data
+            const user = tg.initDataUnsafe.user || {
+                id: 123456789,
+                first_name: "John",
+                last_name: "Doe",
+                photo_url: "https://randomuser.me/api/portraits/men/32.jpg",
+                username: "johndoe"
+            };
             
-            avatar.src = userData.photoUrl;
-            name.textContent = userData.firstName + " " + userData.lastName;
-        }
-        
-        // Show a specific screen
-        function showScreen(screenId) {
-            // Hide all screens
-            Object.values(screens).forEach(screen => {
-                screen.classList.remove('active');
-            });
+            // Set user info
+            document.getElementById('userAvatar').src = user.photo_url || "https://via.placeholder.com/100";
+            document.getElementById('userName').textContent = user.first_name + " " + (user.last_name || "");
             
-            // Show the requested screen
-            document.getElementById(screenId).classList.add('active');
-        }
-        
-        // Share room code via Telegram
-        function shareRoomCode() {
-            const message = `Join my Ludo game on Telegram! Room code: ${gameState.roomCode}`;
-            tg.showPopup({
-                title: 'Share Room Code',
-                message: message,
-                buttons: [{ type: 'ok' }]
-            }, () => {
-                // In real app, this would trigger the share functionality
-                console.log("Sharing room code:", gameState.roomCode);
-            });
-        }
-        
-        // Start the game
-        function startGame() {
-            gameState.gameStarted = true;
-            showScreen('gameScreen');
-        }
-        
-        // Roll the dice
-        function rollDice() {
-            const dice = document.getElementById('dice');
-            dice.classList.add('rolling');
+            // Set other avatars
+            document.getElementById('hostAvatar').src = user.photo_url || "https://via.placeholder.com/100";
+            document.getElementById('hostName').textContent = user.first_name;
             
-            // Simulate dice rolling animation
-            let rolls = 0;
-            const rollInterval = setInterval(() => {
-                gameState.diceValue = Math.floor(Math.random() * 6) + 1;
-                dice.textContent = gameState.diceValue;
-                rolls++;
-                
-                if (rolls > 10) {
-                    clearInterval(rollInterval);
-                    dice.classList.remove('rolling');
-                    processDiceResult();
-                }
-            }, 100);
-        }
-        
-        // Process dice result
-        function processDiceResult() {
-            const status = document.querySelector('.status');
-            status.textContent = `You rolled a ${gameState.diceValue}!`;
+            document.getElementById('joinAvatar').src = user.photo_url || "https://via.placeholder.com/100";
+            document.getElementById('joinName').textContent = user.first_name;
             
-            // Simple game logic: move a random piece
-            setTimeout(() => {
-                const currentPlayer = gameState.players[gameState.currentPlayer];
-                const movablePieces = currentPlayer.pieces
-                    .map((pos, idx) => ({pos, idx}))
-                    .filter(piece => piece.pos < 50); // Simple position limit
-                
-                if (movablePieces.length > 0) {
-                    const randomPiece = movablePieces[Math.floor(Math.random() * movablePieces.length)];
-                    currentPlayer.pieces[randomPiece.idx] += gameState.diceValue;
-                    status.textContent = `Moved piece ${randomPiece.idx + 1}!`;
-                }
-                
-                // Next player's turn
-                gameState.currentPlayer = (gameState.currentPlayer + 1) % 4;
-                updateGameInfo();
-                
-                // Save game state to localStorage
-                localStorage.setItem('ludoGameState', JSON.stringify(gameState));
-            }, 1000);
-        }
-        
-        // Update game info display
-        function updateGameInfo() {
-            const turnIndicator = document.querySelector('.turn-indicator');
-            const currentPlayer = gameState.players[gameState.currentPlayer];
+            document.getElementById('gameAvatar').src = user.photo_url || "https://via.placeholder.com/100";
+            document.getElementById('gamePlayerName').textContent = user.first_name;
             
-            if (gameState.currentPlayer === 0) {
-                turnIndicator.textContent = "Your turn!";
-            } else {
-                turnIn
+            // Initialize player data
+            gameState.players = [
+                { 
+                    id: user.id, 
+                    name: user.first_name, 
+                    color: gameState.playerColors[0],
+                    pieces: [0, 0, 0, 0],
+                    
