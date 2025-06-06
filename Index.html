@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram Ludo</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -33,9 +32,6 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            position: relative;
-            overflow-y: auto;
-            max-height: 95vh;
         }
 
         header {
@@ -160,10 +156,6 @@
             box-shadow: 0 0 8px #4caf50;
         }
 
-        .offline {
-            background: #f44336;
-        }
-
         .btn-group {
             display: flex;
             flex-direction: column;
@@ -286,162 +278,6 @@
             text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
         }
 
-        .game-board-container {
-            position: relative;
-            margin-top: 20px;
-            background: #1a1a2e;
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
-            border: 2px solid #4a235a;
-        }
-
-        .board {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #e0c17f;
-            border: 3px solid #8b4513;
-            display: grid;
-            grid-template-columns: repeat(15, 1fr);
-            grid-template-rows: repeat(15, 1fr);
-            gap: 1px;
-            overflow: hidden;
-        }
-
-        .cell {
-            background: #f0d9b5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .home {
-            background: #b58863;
-        }
-
-        .home-base {
-            position: absolute;
-            width: 30%;
-            height: 30%;
-            border-radius: 5px;
-        }
-
-        .red-base { 
-            top: 5%; 
-            left: 5%; 
-            background: #ff5252; 
-        }
-        .green-base { 
-            top: 5%; 
-            right: 5%; 
-            background: #4caf50; 
-        }
-        .yellow-base { 
-            bottom: 5%; 
-            left: 5%; 
-            background: #ffd600; 
-        }
-        .blue-base { 
-            bottom: 5%; 
-            right: 5%; 
-            background: #2196f3; 
-        }
-
-        .path-cell {
-            background: #e0c17f;
-            border-radius: 50%;
-        }
-
-        .red-path { background: #ff5252; }
-        .green-path { background: #4caf50; }
-        .yellow-path { background: #ffd600; }
-        .blue-path { background: #2196f3; }
-
-        .piece {
-            position: absolute;
-            width: 6.5%;
-            height: 6.5%;
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            z-index: 10;
-            transition: all 0.5s ease;
-        }
-
-        .red-piece { background: #ff5252; }
-        .green-piece { background: #4caf50; }
-        .yellow-piece { background: #ffd600; }
-        .blue-piece { background: #2196f3; }
-
-        .dice-container {
-            display: flex;
-            justify-content: center;
-            margin: 25px 0;
-        }
-
-        .dice {
-            width: 90px;
-            height: 90px;
-            background: white;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3rem;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dice::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(255,255,255,0.3), transparent);
-            border-radius: 20px;
-        }
-
-        .dice.rolling {
-            animation: roll 0.8s ease infinite;
-        }
-
-        @keyframes roll {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
-        }
-
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .turn-indicator {
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #ffd700;
-        }
-
-        .status {
-            font-weight: 600;
-            color: #ffd700;
-            font-size: 1.1rem;
-        }
-
         .instructions {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
@@ -525,7 +361,6 @@
         @media (max-width: 480px) {
             .container {
                 border-radius: 15px;
-                max-height: 100vh;
             }
             
             .content {
@@ -548,12 +383,6 @@
             .avatar {
                 width: 60px;
                 height: 60px;
-            }
-            
-            .dice {
-                width: 80px;
-                height: 80px;
-                font-size: 2.5rem;
             }
             
             .room-code {
@@ -580,7 +409,7 @@
             <div id="homeScreen" class="screen active">
                 <div class="player-info">
                     <div class="avatar">
-                        <img id="userAvatar" src="" alt="Profile">
+                        <img id="userAvatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
                     </div>
                     <div class="player-details">
                         <div class="player-name" id="userName">Player</div>
@@ -592,13 +421,13 @@
                 </div>
 
                 <div class="btn-group">
-                    <button class="btn btn-gold" onclick="showScreen('createRoomScreen')">
+                    <button class="btn btn-gold" id="createRoomBtn">
                         <i class="fas fa-plus-circle"></i> Create Room
                     </button>
-                    <button class="btn btn-secondary" onclick="showScreen('joinRoomScreen')">
+                    <button class="btn btn-secondary" id="joinRoomBtn">
                         <i class="fas fa-sign-in-alt"></i> Join Room
                     </button>
-                    <button class="btn btn-tertiary" onclick="startSinglePlayer()">
+                    <button class="btn btn-tertiary" id="singlePlayerBtn">
                         <i class="fas fa-user"></i> Single Player
                     </button>
                 </div>
@@ -619,7 +448,7 @@
             <div id="createRoomScreen" class="screen">
                 <div class="player-info">
                     <div class="avatar">
-                        <img id="hostAvatar" src="" alt="Profile">
+                        <img id="hostAvatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
                     </div>
                     <div class="player-details">
                         <div class="player-name" id="hostName">Room Owner</div>
@@ -633,20 +462,51 @@
                 <div class="lobby">
                     <h2><i class="fas fa-users"></i> Waiting for players</h2>
                     <div class="players-grid" id="lobbyPlayers">
-                        <!-- Players will be added dynamically -->
+                        <!-- Player 1 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player">
+                            </div>
+                            <div class="player-name">You</div>
+                            <div class="player-status"><i class="fas fa-crown"></i> Host</div>
+                        </div>
+                        
+                        <!-- Player 2 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="player-name">Waiting...</div>
+                        </div>
+                        
+                        <!-- Player 3 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="player-name">Waiting...</div>
+                        </div>
+                        
+                        <!-- Player 4 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="player-name">Waiting...</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="room-code" id="roomCodeDisplay">Generating room code...</div>
+                <div class="room-code" id="roomCodeDisplay">CODE: X7F9K3</div>
 
                 <div class="btn-group">
-                    <button class="btn btn-gold" onclick="shareRoomCode()">
+                    <button class="btn btn-gold" id="shareRoomBtn">
                         <i class="fab fa-telegram"></i> Share via Telegram
                     </button>
-                    <button class="btn btn-tertiary" id="startGameBtn" onclick="startGame()">
+                    <button class="btn btn-tertiary" id="startGameBtn">
                         <i class="fas fa-play"></i> Start Game
                     </button>
-                    <button class="btn" onclick="showScreen('homeScreen')">
+                    <button class="btn" id="backFromCreateBtn">
                         <i class="fas fa-arrow-left"></i> Back
                     </button>
                 </div>
@@ -656,7 +516,7 @@
             <div id="joinRoomScreen" class="screen">
                 <div class="player-info">
                     <div class="avatar">
-                        <img id="joinAvatar" src="" alt="Profile">
+                        <img id="joinAvatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
                     </div>
                     <div class="player-details">
                         <div class="player-name" id="joinName">Join a Game</div>
@@ -670,14 +530,14 @@
                 <div class="join-room-form">
                     <div class="input-group">
                         <label for="roomCodeInput">Room Code</label>
-                        <input type="text" id="roomCodeInput" placeholder="Enter 6-digit code" maxlength="6">
+                        <input type="text" id="roomCodeInput" placeholder="Enter 6-digit code" maxlength="6" value="X7F9K3">
                     </div>
                     
-                    <button class="btn btn-secondary" onclick="joinRoom()">
+                    <button class="btn btn-secondary" id="joinRoomBtn2">
                         <i class="fas fa-sign-in-alt"></i> Join Room
                     </button>
                     
-                    <button class="btn" onclick="showScreen('homeScreen')">
+                    <button class="btn" id="backFromJoinBtn">
                         <i class="fas fa-arrow-left"></i> Back
                     </button>
                 </div>
@@ -687,9 +547,76 @@
             <div id="gameScreen" class="screen">
                 <div class="player-info">
                     <div class="avatar">
-                        <img id="gameAvatar" src="" alt="Profile">
+                        <img id="gameAvatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile">
                     </div>
                     <div class="player-details">
                         <div class="player-name" id="gamePlayerName">Player</div>
                         <div class="player-status" id="gameRoomCode">
-             
+                            <span class="status-dot online"></span>
+                            <span>Room: X7F9K3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lobby" style="margin-top: 20px;">
+                    <div class="players-grid">
+                        <!-- Player 1 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player">
+                            </div>
+                            <div class="player-name">You</div>
+                            <div class="player-status">Your turn</div>
+                        </div>
+                        
+                        <!-- Player 2 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Player">
+                            </div>
+                            <div class="player-name">Sarah</div>
+                            <div class="player-status">Waiting</div>
+                        </div>
+                        
+                        <!-- Player 3 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="Player">
+                            </div>
+                            <div class="player-name">Mike</div>
+                            <div class="player-status">Waiting</div>
+                        </div>
+                        
+                        <!-- Player 4 -->
+                        <div class="player-card">
+                            <div class="avatar">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Player">
+                            </div>
+                            <div class="player-name">Emma</div>
+                            <div class="player-status">Waiting</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-gold" id="rollDiceBtn">
+                        <i class="fas fa-dice"></i> Roll Dice
+                    </button>
+                    
+                    <button class="btn" id="backFromGameBtn">
+                        <i class="fas fa-home"></i> Main Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Telegram Mini App | Multiplayer Ludo Game</p>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfi
