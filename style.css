@@ -1,0 +1,304 @@
+body {
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#ludo-board {
+    width: 450px; /* 15 cells * 30px/cell */
+    height: 450px;
+    background-color: #f8f8f8;
+    border: 3px solid #555;
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    grid-template-rows: repeat(15, 1fr);
+    position: relative; /* For positioning pieces and other elements absolutely */
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px; /* For cell numbers, if any */
+}
+
+/* Player colors */
+.red-start, .red-path { background-color: #ffcccc; }
+.green-start, .green-path { background-color: #ccffcc; }
+.yellow-start, .yellow-path { background-color: #ffffcc; }
+.blue-start, .blue-path { background-color: #ccccff; }
+
+.home-area { background-color: #e0e0e0; }
+.center-triangle { background-color: #ffeb3b; /* Or any distinct color */ }
+
+/* Specific cells for starting areas, paths, etc. will be styled by JS or more specific CSS */
+
+.player-piece {
+    width: 24px; /* Slightly smaller than cell */
+    height: 24px;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    position: absolute; /* To be positioned by JS */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+}
+
+.red-piece { background-color: red; }
+.green-piece { background-color: green; }
+.yellow-piece { background-color: yellow; color: black; } /* Yellow pieces might need black text */
+.blue-piece { background-color: blue; }
+
+/* Starting boxes within the larger start areas */
+.start-box {
+    position: absolute;
+    width: 120px; /* 4 cells * 30px */
+    height: 120px; /* 4 cells * 30px */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    align-items: center;
+    justify-items: center;
+}
+
+/* Positioning for the start boxes */
+.red-start-box { top: 30px; left: 30px; background-color: #ff9999; border: 2px solid red;}
+.green-start-box { top: 30px; right: 30px; background-color: #99ff99; border: 2px solid green;}
+.yellow-start-box { bottom: 30px; right: 30px; background-color: #ffff99; border: 2px solid yellow;}
+.blue-start-box { bottom: 30px; left: 30px; background-color: #9999ff; border: 2px solid blue;}
+
+.start-piece-container {
+    width: 50px; /* Size of the inner circle for pieces */
+    height: 50px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+}
+
+#game-controls {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#roll-dice-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#roll-dice-btn:hover {
+    background-color: #45a049;
+}
+
+#dice-result {
+    margin-top: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    padding: 10px;
+    min-height: 30px; /* Ensure space even before first roll */
+    display: inline-flex; /* Use flex to center content */
+    justify-content: center;
+    align-items: center;
+    width: 60px; /* Fixed size for a die */
+    height: 60px;
+    border: 2px solid #333;
+    border-radius: 10px; /* Rounded corners for die */
+    background-color: #fff;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.1s ease-out; /* For click feedback */
+}
+
+#dice-result.rolling {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    /* background-color: #e7e7e7; */ /* Optional: change bg during roll */
+}
+
+/* Simple shake animation for the die */
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0) scale(1.05);
+  }
+  20%, 80% {
+    transform: translate3d(2px, 0, 0) scale(1.05);
+  }
+  30%, 50%, 70% {
+    transform: translate3d(-3px, 0, 0) scale(1.05);
+  }
+  40%, 60% {
+    transform: translate3d(3px, 0, 0) scale(1.05);
+  }
+}
+
+#roll-dice-btn:active #dice-result {
+    transform: scale(0.95); /* Click feedback */
+}
+
+.selected-piece {
+    border: 3px solid gold !important; /* Ensure it overrides other borders */
+    box-shadow: 0 0 10px gold !important; /* Ensure it's visible */
+    transform: scale(1.1); /* Slightly enlarge selected piece */
+    transition: transform 0.2s ease-in-out, border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Ensure player pieces don't interfere with dice visibility if layout is tight */
+.player-piece {
+    position: relative; /* If they are in cells, otherwise absolute for start areas */
+    z-index: 10;
+}
+
+
+.piece-home {
+    opacity: 0.6; /* Make it slightly transparent */
+    cursor: not-allowed; /* Indicate it cannot be interacted with */
+    /* Optionally, add a checkmark or similar icon using ::after */
+}
+
+.piece-home::after {
+    content: '✔'; /* Checkmark character */
+    color: darkgreen;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5); /* Center and enlarge */
+    font-weight: bold;
+}
+
+/* --- THEMES --- */
+
+/* Default Theme is the existing styling */
+
+/* Space Theme */
+.theme-space #ludo-board {
+    background-color: #0f052d; /* Deep space blue/purple */
+    /* background-image: url('path/to/star-pattern.png'); */ /* Optional star pattern */
+    border-color: #7a00cf; /* Purple border */
+}
+
+.theme-space .cell {
+    border-color: #503683; /* Lighter purple/blue for cell borders */
+    color: #e0e0e0; /* Light text color for cell numbers if any */
+}
+
+/* Space Theme Path Colors - Neon-like */
+.theme-space .red-path, .theme-space .red-start { background-color: #ff004c; box-shadow: 0 0 5px #ff004c, 0 0 10px #ff004c; }
+.theme-space .green-path, .theme-space .green-start { background-color: #00ff4c; box-shadow: 0 0 5px #00ff4c, 0 0 10px #00ff4c; }
+.theme-space .yellow-path, .theme-space .yellow-start { background-color: #ffff00; box-shadow: 0 0 5px #ffff00, 0 0 10px #ffff00; color: #333; }
+.theme-space .blue-path, .theme-space .blue-start { background-color: #007bff; box-shadow: 0 0 5px #007bff, 0 0 10px #007bff; }
+
+/* Space Theme Player Pieces - could have a slight glow or different shape if using SVGs/images */
+.theme-space .red-piece { background-color: #e00000; border: 1px solid #ff8080; }
+.theme-space .green-piece { background-color: #00c000; border: 1px solid #80ff80; }
+.theme-space .yellow-piece { background-color: #d0d000; border: 1px solid #ffff80; color: black; }
+.theme-space .blue-piece { background-color: #0050c0; border: 1px solid #80c0ff; }
+
+
+/* Space Theme Start Boxes */
+.theme-space .red-start-box { background-color: #68001d; border-color: #ff004c; }
+.theme-space .green-start-box { background-color: #004d13; border-color: #00ff4c; }
+.theme-space .yellow-start-box { background-color: #646400; border-color: #ffff00; }
+.theme-space .blue-start-box { background-color: #002250; border-color: #007bff; }
+
+.theme-space .start-piece-container {
+    background-color: #2a0f45; /* Darker, themed background for piece holders */
+    border-color: #7a00cf;
+}
+
+.theme-space .center-triangle {
+    background-color: #9500ff; /* Glowing purple center */
+    border: 1px solid #0f052d;
+    box-shadow: 0 0 10px #9500ff;
+}
+
+/* Ensure text on pieces is readable if theme changes background significantly */
+.theme-space .player-piece {
+    color: white;
+}
+.theme-space .yellow-piece { /* Yellow pieces might need black text if background is light yellow */
+    color: black;
+}
+
+/* Emoji Reactions */
+#emoji-reaction-panel {
+    padding: 5px;
+    background-color: #f0f0f0;
+    border-top: 1px solid #ccc;
+    position: fixed; /* Or relative to a game container */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 100; /* Ensure it's above other elements if fixed */
+}
+
+.emoji-btn {
+    font-size: 20px;
+    padding: 5px 8px;
+    margin: 0 3px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.emoji-btn:hover {
+    background-color: #e7e7e7;
+}
+
+#emoji-overlay-container {
+    position: absolute; /* Relative to #ludo-board or a main game wrapper */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allows clicks to pass through */
+    overflow: hidden; /* Ensures emojis don't appear outside bounds if positioned absolutely */
+    z-index: 200; /* Above game pieces, below modals/popups */
+}
+
+
+.emoji-display {
+    position: absolute; /* Positioned by JS */
+    font-size: 40px; /* Large emoji */
+    opacity: 0;
+    animation: floatAndFade 2.5s ease-out forwards;
+    text-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+@keyframes floatAndFade {
+    0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 0;
+    }
+    20% { /* Appear and grow */
+        transform: translateY(-20px) scale(1.2);
+        opacity: 1;
+    }
+    80% { /* Stay visible and continue floating */
+        transform: translateY(-80px) scale(1.1);
+        opacity: 1;
+    }
+    100% { /* Fade out */
+        transform: translateY(-100px) scale(1);
+        opacity: 0;
+    }
+}

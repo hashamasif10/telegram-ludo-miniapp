@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ludo Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="ludo-board">
+        <!-- Game board will be generated here by JavaScript -->
+    </div>
+    <div id="game-controls">
+        <button id="roll-dice-btn">Roll Dice</button>
+        <div id="dice-result">Click "Roll Dice"</div>
+    </div>
+    <hr>
+    <div>
+        Local Player ID: <span id="local-player-id">Unknown</span>
+    </div>
+    <div id="game-state-controls" style="margin-top: 10px;">
+        <button id="save-state-btn">Save State (Console)</button>
+        <button id="load-state-btn">Load State (Prompt)</button>
+        <button id="share-turn-btn" style="margin-left: 10px;">Share Turn</button>
+        <br>
+        <textarea id="game-state-json" rows="5" cols="70" placeholder="Paste game state JSON here to load..."></textarea>
+    </div>
+    <hr>
+    <div id="theme-selector" style="margin-top:10px; text-align:center;">
+        <span>Select Theme:</span>
+        <button id="theme-default-btn">Default</button>
+        <button id="theme-space-btn">Space</button>
+        <!-- <button id="theme-jungle-btn">Jungle</button> -->
+    </div>
+    <hr>
+    <div id="emoji-reaction-panel" style="margin-top: 10px; text-align: center;">
+        <span>React:</span>
+        <button class="emoji-btn" data-emoji="👍">👍</button>
+        <button class="emoji-btn" data-emoji="😂">😂</button>
+        <button class="emoji-btn" data-emoji="😮">😮</button>
+        <button class="emoji-btn" data-emoji="😢">😢</button>
+        <button class="emoji-btn" data-emoji="🎉">🎉</button>
+    </div>
+    <div id="emoji-overlay-container"></div> <!-- For displaying animated emojis -->
+    <script src="script.js"></script>
+</body>
+</html>
