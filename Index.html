@@ -1,297 +1,637 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ludo Telegram Mini App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f0f0f0;
-      margin: 0;
-      padding: 10px;
-      color: #333;
-    }
-    #game-container {
-      max-width: 360px;
-      margin: 0 auto;
-    }
-    canvas {
-      border: 2px solid #333;
-      background: #fff;
-      width: 100%;
-      max-width: 360px;
-      height: 360px;
-    }
-    #info, #dice {
-      font-size: 16px;
-      margin: 8px 0;
-      font-weight: bold;
-    }
-    button {
-      padding: 8px 16px;
-      margin: 4px;
-      background: #0088cc;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    #move-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Ludo Bot - Multiplayer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e5799, #207cca, #2989d8, #1e5799);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .telegram-container {
+            width: 100%;
+            max-width: 420px;
+            background-color: #1e2c3d;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .telegram-header {
+            background: linear-gradient(to right, #0088cc, #00a2e0);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            color: white;
+            position: relative;
+        }
+        
+        .header-content {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .header-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .game-container {
+            padding: 20px;
+            background-color: #17212b;
+            color: #e6e6e6;
+        }
+        
+        .player-info {
+            background-color: #222e3d;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2d3b4d;
+        }
+        
+        .player-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4eb2f9;
+        }
+        
+        .player-status {
+            display: flex;
+            justify-content: space-between;
+            background-color: #1a2533;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .player-status:hover {
+            background-color: #243447;
+            transform: translateY(-2px);
+        }
+        
+        .player-status.current {
+            background: linear-gradient(to right, #2c3e50, #1a2533);
+            border-left: 4px solid #4eb2f9;
+        }
+        
+        .player-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .player-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .player-tokens {
+            background-color: #2d3b4d;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .dice-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            gap: 15px;
+        }
+        
+        .dice {
+            flex: 1;
+            background: linear-gradient(to bottom right, #2d3b4d, #1a2533);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dice-label {
+            font-size: 14px;
+            color: #a0b1c5;
+            margin-bottom: 8px;
+        }
+        
+        .dice-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #4eb2f9;
+            letter-spacing: 1px;
+        }
+        
+        .board-container {
+            background-color: #222e3d;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .board-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4eb2f9;
+        }
+        
+        .ludo-board {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background-color: #2c3e50;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            gap: 2px;
+            padding: 5px;
+        }
+        
+        .board-cell {
+            background-color: #1a2533;
+            border-radius: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            color: #4eb2f9;
+        }
+        
+        .home-cell {
+            background-color: #e74c3c;
+        }
+        
+        .red-path {
+            background-color: #e74c3c;
+        }
+        
+        .blue-path {
+            background-color: #3498db;
+        }
+        
+        .green-path {
+            background-color: #2ecc71;
+        }
+        
+        .yellow-path {
+            background-color: #f1c40f;
+        }
+        
+        .token {
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease;
+        }
+        
+        .token-red {
+            background: radial-gradient(circle at 30% 30%, #ff7979, #e74c3c);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .token-blue {
+            background: radial-gradient(circle at 30% 30%, #7ed6df, #3498db);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .token-green {
+            background: radial-gradient(circle at 30% 30%, #badc58, #2ecc71);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .token-yellow {
+            background: radial-gradient(circle at 30% 30%, #ffeaa7, #f1c40f);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .control-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .roll-btn {
+            background: linear-gradient(to right, #4eb2f9, #0088cc);
+            color: white;
+        }
+        
+        .roll-btn:hover {
+            background: linear-gradient(to right, #5cbdfa, #0099e6);
+            transform: translateY(-3px);
+        }
+        
+        .menu-btn {
+            background-color: #2d3b4d;
+            color: #a0b1c5;
+        }
+        
+        .menu-btn:hover {
+            background-color: #36465a;
+        }
+        
+        .telegram-footer {
+            padding: 15px 20px;
+            background-color: #1a2533;
+            display: flex;
+            justify-content: space-between;
+            color: #a0b1c5;
+            font-size: 14px;
+        }
+        
+        .footer-icon {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .multiplayer-info {
+            background-color: #222e3d;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .multiplayer-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2d3b4d;
+        }
+        
+        .multiplayer-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4eb2f9;
+        }
+        
+        .players-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .player-card {
+            background-color: #1a2533;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .player-card .player-icon {
+            width: 25px;
+            height: 25px;
+            font-size: 12px;
+        }
+        
+        .player-card .player-name {
+            font-size: 14px;
+        }
+        
+        .player-status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+        
+        .status-online {
+            background-color: #2ecc71;
+        }
+        
+        .status-offline {
+            background-color: #e74c3c;
+        }
+        
+        .status-playing {
+            background-color: #f1c40f;
+        }
+        
+        .chat-container {
+            margin-top: 20px;
+            background-color: #222e3d;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2d3b4d;
+        }
+        
+        .chat-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4eb2f9;
+        }
+        
+        .chat-messages {
+            height: 120px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .message {
+            background-color: #1a2533;
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 80%;
+            align-self: flex-start;
+        }
+        
+        .message.self {
+            background-color: #2d3b4d;
+            align-self: flex-end;
+        }
+        
+        .message-sender {
+            font-weight: bold;
+            font-size: 12px;
+            color: #4eb2f9;
+            margin-bottom: 3px;
+        }
+        
+        .message-content {
+            font-size: 14px;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            background-color: #1a2533;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .chat-input button {
+            background: linear-gradient(to right, #4eb2f9, #0088cc);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <div id="game-container">
-    <h1 style="font-size: 20px; margin: 10px 0;">Ludo Mini App</h1>
-    <div id="info">Initializing...</div>
-    <div id="dice">Dice: -</div>
-    <canvas id="board" width="360" height="360"></canvas>
-    <button id="roll-btn" onclick="rollDice()">Roll Dice</button>
-    <div id="move-buttons"></div>
-  </div>
-
-  <script src="https://telegram.org/js/telegram-web-app.js?57"></script>
-  <script>
-    // Telegram Web App initialization
-    window.Telegram.WebApp.ready();
-    const user = window.Telegram.WebApp.initDataUnsafe.user || { id: 'test' + Math.random(), username: 'TestUser' };
-    document.getElementById('info').innerText = `Welcome, ${user.username}!`;
-
-    // Game state
-    const game = {
-      players: [
-        { id: user.id, color: 'red', pieces: [{ pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 }], start: 0, homePath: [52, 53, 54, 55, 56, 57], wins: 0 },
-        { id: 'player2', color: 'blue', pieces: [{ pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 }], start: 13, homePath: [58, 59, 60, 61, 62, 63], wins: 0 },
-        { id: 'player3', color: 'green', pieces: [{ pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 }], start: 26, homePath: [64, 65, 66, 67, 68, 69], wins: 0 },
-        { id: 'player4', color: 'yellow', pieces: [{ pos: -1 }, { pos: -1 }, { pos: -1 }, { pos: -1 }], start: 39, homePath: [70, 71, 72, 73, 74, 75], wins: 0 }
-      ],
-      currentTurn: 0,
-      dice: null,
-      path: Array.from({ length: 52 }, (_, i) => i), // Shared outer path (0-51)
-      winner: null
-    };
-
-    // Canvas setup
-    const canvas = document.getElementById('board');
-    const ctx = canvas.getContext('2d');
-    const size = 360 / 15; // 15x15 grid
-
-    // Draw Ludo board
-    function drawBoard() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Outer path (simplified as a square)
-      const pathCoords = [
-        ...Array.from({ length: 13 }, (_, i) => ({ x: i + 1, y: 1 })), // Top
-        ...Array.from({ length: 13 }, (_, i) => ({ x: 14, y: i + 1 })), // Right
-        ...Array.from({ length: 13 }, (_, i) => ({ x: 14 - i, y: 14 })), // Bottom
-        ...Array.from({ length: 13 }, (_, i) => ({ x: 1, y: 14 - i })) // Left
-      ];
-      pathCoords.forEach(({ x, y }, i) => {
-        ctx.strokeStyle = '#333';
-        ctx.strokeRect(x * size, y * size, size, size);
-        if ([0, 13, 26, 39].includes(i)) ctx.fillStyle = game.players.find(p => p.start === i).color;
-        else ctx.fillStyle = '#fff';
-        ctx.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-      });
-      // Home paths
-      game.players.forEach(p => {
-        p.homePath.forEach((_, i) => {
-          const x = 7 + (p.color === 'red' ? i + 1 : p.color === 'blue' ? -i - 1 : 0);
-          const y = 7 + (p.color === 'green' ? i + 1 : p.color === 'yellow' ? -i - 1 : 0);
-          ctx.fillStyle = p.color;
-          ctx.fillRect(x * size, y * size, size, size);
-        });
-      });
-      // Center (winning square)
-      ctx.fillStyle = '#ccc';
-      ctx.fillRect(7 * size, 7 * size, size, size);
-      // Home triangles (simplified)
-      game.players.forEach(p => {
-        const home = p.color === 'red' ? { x: 2, y: 2 } : p.color === 'blue' ? { x: 12, y: 2 } :
-                     p.color === 'green' ? { x: 12, y: 12 } : { x: 2, y: 12 };
-        ctx.fillStyle = p.color;
-        ctx.fillRect(home.x * size, home.y * size, size * 2, size * 2);
-      });
-      // Draw pieces
-      game.players.forEach(p => {
-        p.pieces.forEach((piece, i) => {
-          if (piece.pos >= 0) {
-            let x, y;
-            if (piece.pos < 52) {
-              x = pathCoords[piece.pos].x * size + size / 2;
-              y = pathCoords[piece.pos].y * size + size / 2;
-            } else {
-              const hpIndex = p.homePath.indexOf(piece.pos);
-              x = (7 + (p.color === 'red' ? hpIndex + 1 : p.color === 'blue' ? -hpIndex - 1 : 0)) * size + size / 2;
-              y = (7 + (p.color === 'green' ? hpIndex + 1 : p.color === 'yellow' ? -hpIndex - 1 : 0)) * size + size / 2;
-            }
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(x, y, size / 3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = 'white';
-            ctx.font = '10px Arial';
-            ctx.fillText(i + 1, x - 5, y + 3);
-          } else {
-            const home = p.color === 'red' ? { x: 2.5, y: 2.5 } : p.color === 'blue' ? { x: 12.5, y: 2.5 } :
-                         p.color === 'green' ? { x: 12.5, y: 12.5 } : { x: 2.5, y: 12.5 };
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(home.x * size, home.y * size, size / 3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = 'white';
-            ctx.font = '10px Arial';
-            ctx.fillText(i + 1, home.x * size - 5, home.y * size + 3);
-          }
-        });
-      });
-    }
-
-    // Update info
-    function updateInfo() {
-      const player = game.players[game.currentTurn];
-      document.getElementById('info').innerText = game.winner ? `${game.winner.color} wins!` :
-        `Turn: ${player.color} | ${player.id === user.id ? user.username : player.id}`;
-      document.getElementById('dice').innerText = `Dice: ${game.dice || '-'}`;
-      document.getElementById('roll-btn').disabled = player.id !== user.id || game.dice || game.winner;
-      renderMoveButtons();
-      drawBoard();
-    }
-
-    // Render move buttons
-    function renderMoveButtons() {
-      const buttonsDiv = document.getElementById('move-buttons');
-      buttonsDiv.innerHTML = '';
-      if (game.dice && game.players[game.currentTurn].id === user.id && !game.winner) {
-        game.players[game.currentTurn].pieces.forEach((piece, i) => {
-          if (piece.pos >= 0 || game.dice === 6) {
-            const button = document.createElement('button');
-            button.innerText = `Move Piece ${i + 1}`;
-            button.onclick = () => movePiece(i);
-            buttonsDiv.appendChild(button);
-          }
-        });
-      }
-    }
-
-    // Roll dice
-    function rollDice() {
-      if (game.players[game.currentTurn].id === user.id && !game.dice && !game.winner) {
-        game.dice = Math.floor(Math.random() * 6) + 1;
-        updateInfo();
-        if (game.dice !== 6 && !game.players[game.currentTurn].pieces.some(p => p.pos >= 0)) {
-          game.dice = null;
-          game.currentTurn = (game.currentTurn + 1) % game.players.length;
-          setTimeout(playAITurn, 500);
-        }
-      }
-    }
-
-    // Move piece
-    function movePiece(pieceIndex) {
-      if (game.players[game.currentTurn].id === user.id && game.dice && !game.winner) {
-        const player = game.players[game.currentTurn];
-        const piece = player.pieces[pieceIndex];
-        let newPos = piece.pos;
-        if (piece.pos === -1 && game.dice === 6) {
-          newPos = player.start;
-        } else if (piece.pos >= 0) {
-          const pathIndex = piece.pos < 52 ? piece.pos - player.start : 52;
-          const steps = piece.pos < 52 ? game.dice : game.dice - (52 - (piece.pos - player.start));
-          newPos = piece.pos < 52 ? (piece.pos + game.dice) % 52 : player.homePath[steps - 1] || piece.pos;
-        } else {
-          return;
-        }
-        // Capture
-        if (newPos < 52) {
-          game.players.forEach((opponent, i) => {
-            if (i !== game.currentTurn) {
-              opponent.pieces.forEach(p => {
-                if (p.pos === newPos) p.pos = -1;
-              });
-            }
-          });
-        }
-        piece.pos = newPos;
-        // Check win
-        if (player.pieces.every(p => p.pos === player.homePath[5])) {
-          game.winner = player;
-        }
-        // Extra turn for 6
-        if (game.dice === 6 && !game.winner) {
-          game.dice = null;
-          updateInfo();
-        } else {
-          game.dice = null;
-          game.currentTurn = (game.currentTurn + 1) % game.players.length;
-          updateInfo();
-          setTimeout(playAITurn, 500);
-        }
-      }
-    }
-
-    // AI for other players
-    function playAITurn() {
-      if (game.players[game.currentTurn].id !== user.id && !game.winner) {
-        game.dice = Math.floor(Math.random() * 6) + 1;
-        updateInfo();
-        const player = game.players[game.currentTurn];
-        const movable = player.pieces.map((p, i) => ({ pos: p.pos, index: i }))
-          .filter(p => p.pos >= 0 || game.dice === 6);
-        if (movable.length > 0) {
-          const piece = movable[Math.floor(Math.random() * movable.length)];
-          setTimeout(() => {
-            let newPos = piece.pos;
-            if (piece.pos === -1 && game.dice === 6) {
-              newPos = player.start;
-            } else if (piece.pos >= 0) {
-              const pathIndex = piece.pos < 52 ? piece.pos - player.start : 52;
-              newPos = piece.pos < 52 ? (piece.pos + game.dice) % 52 : player.homePath[game.dice - 1] || piece.pos;
-            }
-            if (newPos < 52) {
-              game.players.forEach((opponent, i) => {
-                if (i !== game.currentTurn) {
-                  opponent.pieces.forEach(p => {
-                    if (p.pos === newPos) p.pos = -1;
-                  });
-                }
-              });
-            }
-            player.pieces[piece.index].pos = newPos;
-            if (player.pieces.every(p => p.pos === player.homePath[5])) {
-              game.winner = player;
-            }
-            if (game.dice === 6 && !game.winner) {
-              game.dice = null;
-              updateInfo();
-              setTimeout(playAITurn, 500);
-            } else {
-              game.dice = null;
-              game.currentTurn = (game.currentTurn + 1) % game.players.length;
-              updateInfo();
-            }
-          }, 500);
-        } else {
-          game.dice = null;
-          game.currentTurn = (game.currentTurn + 1) % game.players.length;
-          updateInfo();
-        }
-      }
-    }
-
-    // Initialize
-    drawBoard();
-    updateInfo();
-  </script>
-</body>
-</html>
+    <div class="telegram-container">
+        <div class="telegram-header">
+            <button class="back-button">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="header-content">
+                <div class="header-title">Ludo Bot</div>
+                <div class="header-subtitle">Multiplayer • 4 Players • Room #LUDO-42</div>
+            </div>
+        </div>
+        
+        <div class="game-container">
+            <div class="player-info">
+                <div class="player-header">
+                    <div class="player-title">Players</div>
+                    <div>Turn: <span style="color:#4eb2f9">Albania</span></div>
+                </div>
+                
+                <div class="player-status current">
+                    <div class="player-name">
+                        <span class="player-icon" style="background-color:#e74c3c">
+                            <i class="fas fa-crown"></i>
+                        </span>
+                        Albania
+                    </div>
+                    <div class="player-tokens">Rolling...</div>
+                </div>
+                
+                <div class="player-status">
+                    <div class="player-name">
+                        <span class="player-icon" style="background-color:#3498db">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        Ugraft
+                    </div>
+                    <div class="player-tokens">Full 2</div>
+                </div>
+                
+                <div class="player-status">
+                    <div class="player-name">
+                        <span class="player-icon" style="background-color:#2ecc71">
+                            <i class="fas fa-robot"></i>
+                        </span>
+                        Virtual: Airbus
+                    </div>
+                    <div class="player-tokens">Full 1</div>
+                </div>
+            </div>
+            
+            <div class="dice-container">
+                <div class="dice">
+                    <div class="dice-label">Current Roll</div>
+                    <div class="dice-value" id="current-dice">2.840</div>
+                </div>
+                
+                <div class="dice">
+                    <div class="dice-label">Previous Roll</div>
+                    <div class="dice-value" id="previous-dice">4.070</div>
+                </div>
+            </div>
+            
+            <div class="board-container">
+                <div class="board-header">
+                    <div class="board-title">Game Board</div>
+                    <div>Round: 7</div>
+                </div>
+                
+                <div class="ludo-board" id="ludo-board">
+                    <!-- Red home area -->
+                    <div class="board-cell home-cell" style="grid-column: 2 / 5; grid-row: 2 / 5;"></div>
+                    
+                    <!-- Blue home area -->
+                    <div class="board-cell home-cell" style="grid-column: 11 / 14; grid-row: 2 / 5; background-color: #3498db;"></div>
+                    
+                    <!-- Green home area -->
+                    <div class="board-cell home-cell" style="grid-column: 2 / 5; grid-row: 11 / 14; background-color: #2ecc71;"></div>
+                    
+                    <!-- Yellow home area -->
+                    <div class="board-cell home-cell" style="grid-column: 11 / 14; grid-row: 11 / 14; background-color: #f1c40f;"></div>
+                    
+                    <!-- Token positions -->
+                    <div class="token token-red" id="token-red-1" style="top: 15%; left: 15%;"></div>
+                    <div class="token token-red" id="token-red-2" style="top: 15%; left: 30%;"></div>
+                    <div class="token token-blue" id="token-blue-1" style="top: 15%; left: 70%;"></div>
+                    <div class="token token-green" id="token-green-1" style="top: 70%; left: 15%;"></div>
+                    <div class="token token-green" id="token-green-2" style="top: 70%; left: 30%;"></div>
+                    <div class="token token-yellow" id="token-yellow-1" style="top: 70%; left: 70%;"></div>
+                    <div class="token token-yellow" id="token-yellow-2" style="top: 70%; left: 85%;"></div>
+                </div>
+            </div>
+            
+            <div class="multiplayer-info">
+                <div class="multiplayer-header">
+                    <div class="multiplayer-title">Players Online</div>
+                    <div>4/4</div>
+                </div>
+                
+                <div class="players-list">
+                    <div class="player-card">
+                        <span class="player-icon" style="background-color:#e74c3c">
+                            <i class="fas fa-crown"></i>
+                        </span>
+                        <div class="player-name">Albania</div>
+                        <div class="player-status-indicator status-playing"></div>
+                    </div>
+                    
+                    <div class="player-card">
+                        <span class="player-icon" style="background-color:#3498db">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <div class="player-name">Ugraft</div>
+                        <div class="player-status-indicator status-online"></div>
+                    </div>
+                    
+                    <div class="player-card">
+                        <span class="player-icon" style="background-color:#2ecc71">
+                            <i class="fas fa-robot"></i>
+                        </span>
+                        <div class="player-name">Airbus</div>
+                        <div class="player-status-indicator status-online"></div>
+                    </div>
+                    
+                    <div class="player-card">
+                        <span class="player-icon" style="background-color:#f1c40f">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <div class="player-name">Player4</div>
+                        <div class="player-status-indicator status-online"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="chat-title">Game Chat</div>
+                    <div>Online: 4</div>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message">
+                        <div class="message-sender">Ludo Bot</div>
+                        <div class="message-content">Game started! Albania goes first.</div>
+                    </div>
+                    <div class="message self">
+                        <div class="message-sender">You</div>
+                        <div class="message-content">Good luck everyone!</div>
+                    </div>
+                    <div class="message">
+                        <div class="message-sender">Ugraft</div>
+                        <div class="message-content">Let's do this! 😎</div>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Type a message...">
+                    <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            
+            <div class="game-controls">
+                <button class="control-btn roll-btn" id="roll-btn">
+                    <i class="fas fa-dice"></i> Roll Dice
+                </button>
+                <button cl
